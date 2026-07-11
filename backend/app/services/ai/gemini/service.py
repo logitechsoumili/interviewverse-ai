@@ -1,5 +1,5 @@
 import asyncio
-from typing import Any, Dict, Optional
+from typing import Any, AsyncIterator, Dict, Optional
 from google.genai import types
 from google.genai import errors
 from tenacity import retry, stop_after_attempt, wait_exponential, retry_if_exception
@@ -189,4 +189,76 @@ class GeminiService:
 
         StructuredLogger.info("Gemini content generation completed successfully")
         return response_text
+
+    async def generate_stream(
+        self,
+        system_prompt: str,
+        user_prompt: str,
+    ) -> AsyncIterator[str]:
+        """Generates a text stream from the Gemini model using system and user prompts.
+        
+        Args:
+            system_prompt: Guidelines/role for the model (system instruction).
+            user_prompt: User input to respond to.
+            
+        Yields:
+            Incremental text chunks from the response.
+            
+        Raises:
+            GeminiRateLimitError: If rate limited.
+            GeminiAuthenticationError: If auth/permissions fail.
+            GeminiGenerationError: If input/model config is invalid or response is malformed.
+            GeminiError: For other unexpected errors.
+        """
+        if not system_prompt or not system_prompt.strip():
+            raise GeminiGenerationError("System prompt cannot be empty.")
+        if not user_prompt or not user_prompt.strip():
+            raise GeminiGenerationError("User prompt cannot be empty.")
+
+        StructuredLogger.info(
+            "Starting Gemini content streaming",
+            extra={"model": self.model}
+        )
+
+        config = self._prepare_config(system_prompt=system_prompt)
+        contents = self._prepare_contents(user_prompt)
+
+        try:
+            stream = self.client.generate_content_stream(
+                model=self.model,
+                contents=contents,
+                config=config,
+            )
+            async for chunk in stream:
+                yield chunk
+        except errors.ClientError as e:
+            if e.code == 429:
+                StructuredLogger.warning("Gemini API rate limit exceeded")
+                raise GeminiRateLimitError("Gemini API rate limit exceeded.", original_error=e) from e
+            elif e.code in (401, 403):
+                StructuredLogger.error("Gemini API authentication/permission error")
+                raise GeminiAuthenticationError("Gemini authentication or permission failed.", original_error=e) from e
+            else:
+                StructuredLogger.error(f"Gemini client API error (code {e.code})")
+                raise GeminiGenerationError(f"Gemini client API error (code {e.code}): {e.message or str(e)}", original_error=e) from e
+                
+        except errors.ServerError as e:
+            StructuredLogger.error(f"Gemini server error (code {e.code})")
+            raise GeminiGenerationError(f"Gemini server error (code {e.code}): {e.message or str(e)}", original_error=e) from e
+            
+        except errors.APIError as e:
+            StructuredLogger.error(f"Gemini generic API error (code {e.code})")
+            raise GeminiError(f"Gemini API error (code {e.code}): {e.message or str(e)}", original_error=e) from e
+            
+        except Exception as e:
+            if isinstance(e, (httpx.TimeoutException, asyncio.TimeoutError)):
+                StructuredLogger.error("Gemini API request timed out")
+                raise GeminiGenerationError("Gemini API request timed out.", original_error=e) from e
+            if isinstance(e, httpx.NetworkError):
+                StructuredLogger.error("Gemini API network error occurred")
+                raise GeminiGenerationError("Gemini API network communication failed.", original_error=e) from e
+                
+            StructuredLogger.error(f"Unexpected error during Gemini streaming: {str(e)}")
+            raise GeminiError(f"Unexpected error during Gemini streaming: {str(e)}", original_error=e) from e
+
 

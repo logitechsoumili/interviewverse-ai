@@ -1,4 +1,4 @@
-from typing import Any, Optional, Protocol
+from typing import Any, AsyncIterator, Optional, Protocol
 from google.genai import types
 
 class GeminiClientProtocol(Protocol):
@@ -24,3 +24,22 @@ class GeminiClientProtocol(Protocol):
             The raw string response returned by the Gemini API.
         """
         ...
+
+    async def generate_content_stream(
+        self,
+        model: str,
+        contents: Any,
+        config: Optional[types.GenerateContentConfig] = None,
+    ) -> AsyncIterator[str]:
+        """Sends an asynchronous streaming generation request to the Gemini API and yields raw text chunks.
+        
+        Args:
+            model: The name of the Gemini model to use.
+            contents: The prompts or multi-turn content for generation.
+            config: Optional GenerateContentConfig object.
+            
+        Yields:
+            Incremental text chunks.
+        """
+        ...
+

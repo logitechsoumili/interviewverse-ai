@@ -1,4 +1,4 @@
-from typing import Any, Optional
+from typing import Any, AsyncIterator, Optional
 from google import genai
 from google.genai import types
 from backend.app.services.ai.gemini.protocol import GeminiClientProtocol
@@ -44,6 +44,32 @@ class GeminiClient(GeminiClientProtocol):
             return ""
         return response.text
 
+    async def generate_content_stream(
+        self,
+        model: str,
+        contents: Any,
+        config: Optional[types.GenerateContentConfig] = None,
+    ) -> AsyncIterator[str]:
+        """Sends an async streaming generation request to the Gemini API and yields text chunks.
+        
+        Args:
+            model: The Gemini model identifier.
+            contents: Prompts/messages/input contents.
+            config: Optional GenerateContentConfig object.
+            
+        Yields:
+            The raw text chunk as it arrives from the API.
+        """
+        response_stream = await self._client.aio.models.generate_content_stream(
+            model=model,
+            contents=contents,
+            config=config,
+        )
+        async for chunk in response_stream:
+            if chunk.text is not None:
+                yield chunk.text
+
     async def aclose(self) -> None:
         """Closes the underlying asynchronous HTTP client connections."""
         await self._client.aio.aclose()
+
