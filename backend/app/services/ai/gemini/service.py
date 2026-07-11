@@ -122,12 +122,14 @@ class GeminiService:
         self,
         system_prompt: str,
         user_prompt: str,
+        temperature: Optional[float] = None,
     ) -> str:
         """Generates text from the Gemini model using the system prompt and user prompt.
         
         Args:
             system_prompt: Guidelines/role for the model (system instruction).
             user_prompt: User input to respond to.
+            temperature: Optional custom temperature to override default.
             
         Returns:
             The validated non-empty raw text response.
@@ -148,7 +150,7 @@ class GeminiService:
             extra={"model": self.model}
         )
 
-        config = self._prepare_config(system_prompt=system_prompt)
+        config = self._prepare_config(system_prompt=system_prompt, temperature=temperature)
         contents = self._prepare_contents(user_prompt)
 
         try:
