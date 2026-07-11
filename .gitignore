@@ -128,3 +128,6 @@ secrets/
 .cache/
 tmp/
 temp/
+
+# Unignore Phase 8 reports engine package
+!backend/app/services/ai/reports/
