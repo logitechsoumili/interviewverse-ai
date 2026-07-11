@@ -1,6 +1,6 @@
 import pytest
 import json
-from datetime import datetime
+from datetime import datetime, timezone
 from backend.app.services.ai.personas.models import PersonaType
 from backend.app.services.ai.prompts.base import ConversationMessage
 from backend.app.services.ai.conversation.models import ConversationSession, ConversationTurn, SpeakerType
@@ -205,7 +205,7 @@ def test_conversation_turn_serialization() -> None:
     turn = ConversationTurn(
         role=SpeakerType.INTERVIEWER,
         content="What is virtual memory?",
-        timestamp=datetime.utcnow()
+        timestamp=datetime.now(timezone.utc)
     )
     serialized = turn.model_dump_json()
     
@@ -224,11 +224,11 @@ def test_conversation_session_serialization() -> None:
         session_id="session_serialization",
         persona_id=PersonaType.SWE,
         turns=[
-            ConversationTurn(role=SpeakerType.INTERVIEWER, content="Hello", timestamp=datetime.utcnow()),
-            ConversationTurn(role=SpeakerType.CANDIDATE, content="Hi", timestamp=datetime.utcnow())
+            ConversationTurn(role=SpeakerType.INTERVIEWER, content="Hello", timestamp=datetime.now(timezone.utc)),
+            ConversationTurn(role=SpeakerType.CANDIDATE, content="Hi", timestamp=datetime.now(timezone.utc))
         ],
         is_active=True,
-        created_at=datetime.utcnow()
+        created_at=datetime.now(timezone.utc)
     )
     serialized = session.model_dump_json()
     

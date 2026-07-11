@@ -1,5 +1,5 @@
 from typing import List, Optional
-from datetime import datetime
+from datetime import datetime, timezone
 from difflib import SequenceMatcher
 
 from backend.app.services.ai.prompts.base import ConversationMessage
@@ -60,7 +60,7 @@ class ConversationService:
         turn = ConversationTurn(
             role=SpeakerType.INTERVIEWER,
             content=content.strip(),
-            timestamp=datetime.utcnow()
+            timestamp=datetime.now(timezone.utc)
         )
         self.repository.append_turn(session_id, turn)
 
@@ -75,7 +75,7 @@ class ConversationService:
         turn = ConversationTurn(
             role=SpeakerType.CANDIDATE,
             content=content.strip(),
-            timestamp=datetime.utcnow()
+            timestamp=datetime.now(timezone.utc)
         )
         self.repository.append_turn(session_id, turn)
 
