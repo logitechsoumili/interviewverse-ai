@@ -157,3 +157,28 @@ class PromptBuilder:
             "evaluation_history": formatted_eval_history.strip(),
         }
         return self.renderer.render(template, variables)
+
+    def build_interview_evaluation_prompt(
+        self,
+        persona_context: str,
+        history: List[ConversationMessage],
+    ) -> PromptPayload:
+        """Builds the PromptPayload for evaluating the candidate's complete interview.
+        
+        Args:
+            persona_context: Persona-specific context/evaluation guidelines.
+            history: List of ConversationMessage objects representing the interview transcript.
+            
+        Returns:
+            The fully rendered PromptPayload.
+        """
+        self._validate_non_empty("persona_context", persona_context)
+        formatted_history = self._format_history(history)
+        
+        template = self.registry.get_template("interview_evaluation")
+        
+        variables = {
+            "persona_context": persona_context.strip(),
+            "history": formatted_history,
+        }
+        return self.renderer.render(template, variables)

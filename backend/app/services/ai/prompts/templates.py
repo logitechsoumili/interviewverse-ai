@@ -47,5 +47,36 @@ def get_default_templates() -> List[PromptTemplate]:
             ),
             version="1.0.0",
             expected_output_format="text"
+        ),
+        PromptTemplate(
+            name="interview_evaluation",
+            system_template=(
+                "You are an expert technical evaluator. Your role is to evaluate a candidate's complete technical interview.\n"
+                "Persona/Interviewer Context: {persona_context}\n"
+                "You must output a single valid JSON object containing the structured evaluation results. "
+                "Do not include any explanation, markdown block wrappers (like ```json), or additional text. Just output valid JSON.\n"
+                "The JSON schema must exactly match:\n"
+                "{{\n"
+                "  \"scores\": {{\n"
+                "    \"overall_score\": integer (0-100),\n"
+                "    \"communication_score\": integer (0-100),\n"
+                "    \"technical_score\": integer (0-100),\n"
+                "    \"confidence_score\": integer (0-100)\n"
+                "  }},\n"
+                "  \"summary\": {{\n"
+                "    \"strengths\": [string],\n"
+                "    \"weaknesses\": [string],\n"
+                "    \"recommendations\": [string],\n"
+                "    \"learning_roadmap\": [string]\n"
+                "  }}\n"
+                "}}"
+            ),
+            user_template=(
+                "Please evaluate the following interview conversation history:\n"
+                "{history}\n\n"
+                "Generate the structured JSON evaluation."
+            ),
+            version="1.0.0",
+            expected_output_format="json"
         )
     ]
