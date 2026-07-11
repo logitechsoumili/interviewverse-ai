@@ -17,6 +17,7 @@ from backend.app.services.ai.evaluation.exceptions import (
     EvaluationParsingError,
     InvalidEvaluationError,
 )
+from backend.app.services.ai.evaluation.repository import EvaluationRepository
 
 class EvaluationService:
     """Evaluation Engine Service responsible for generating structured interview evaluations."""
@@ -28,6 +29,7 @@ class EvaluationService:
         conversation_service: ConversationService,
         persona_service: PersonaService,
         interview_service: InterviewService,
+        evaluation_repository: EvaluationRepository,
     ) -> None:
         """Initializes the service with constructor-injected dependencies.
         
@@ -37,12 +39,14 @@ class EvaluationService:
             conversation_service: Injected ConversationService.
             persona_service: Injected PersonaService.
             interview_service: Injected InterviewService.
+            evaluation_repository: Injected EvaluationRepository.
         """
         self.prompt_builder = prompt_builder
         self.gemini_service = gemini_service
         self.conversation_service = conversation_service
         self.persona_service = persona_service
         self.interview_service = interview_service
+        self.evaluation_repository = evaluation_repository
 
     def _validate_non_empty(self, field_name: str, value: str) -> None:
         """Helper to reject empty or whitespace strings."""
@@ -210,5 +214,7 @@ class EvaluationService:
             StructuredLogger.error(f"Gemini generation failed for interview {interview_id}: {str(e)}")
             raise EvaluationError(f"Gemini evaluation generation failed: {str(e)}") from e
 
-        # 7. Parse response & return EvaluationResult
-        return self.parse_evaluation_response(raw_response, persona_id=session.persona_id)
+        # 7. Parse response, save to repository & return EvaluationResult
+        evaluation = self.parse_evaluation_response(raw_response, persona_id=session.persona_id)
+        self.evaluation_repository.save_evaluation(interview_id, evaluation)
+        return evaluation

@@ -13,3 +13,7 @@ class EvaluationParsingError(EvaluationError):
 class InvalidEvaluationError(EvaluationError):
     """Raised when evaluation inputs or score validation rules fail."""
     pass
+
+class EvaluationNotFoundError(EvaluationError):
+    """Raised when the requested evaluation is not found."""
+    pass

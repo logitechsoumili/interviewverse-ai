@@ -37,12 +37,17 @@ def mock_interview_service() -> MagicMock:
     return MagicMock()
 
 @pytest.fixture
+def mock_evaluation_repository() -> MagicMock:
+    return MagicMock()
+
+@pytest.fixture
 def evaluation_service(
     mock_prompt_builder: MagicMock,
     mock_gemini_service: MagicMock,
     mock_conversation_service: MagicMock,
     mock_persona_service: MagicMock,
     mock_interview_service: MagicMock,
+    mock_evaluation_repository: MagicMock,
 ) -> EvaluationService:
     return EvaluationService(
         prompt_builder=mock_prompt_builder,
@@ -50,6 +55,7 @@ def evaluation_service(
         conversation_service=mock_conversation_service,
         persona_service=mock_persona_service,
         interview_service=mock_interview_service,
+        evaluation_repository=mock_evaluation_repository,
     )
 
 # ==========================================
@@ -287,6 +293,7 @@ async def test_evaluate_interview_success(
         user_prompt="user prompt",
         temperature=0.0
     )
+    evaluation_service.evaluation_repository.save_evaluation.assert_called_once_with(interview_id, result)
 
 @pytest.mark.anyio
 async def test_evaluate_interview_session_not_found(
