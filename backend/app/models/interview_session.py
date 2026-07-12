@@ -9,13 +9,13 @@ from uuid import UUID, uuid4
 from sqlalchemy import DateTime, ForeignKey, Uuid
 from sqlalchemy.orm import Mapped, mapped_column, relationship
 
-from backend.app.db.base import Base
+from app.db.base import Base
 
 if TYPE_CHECKING:
-    from backend.app.models.message import Message
-    from backend.app.models.persona import Persona
-    from backend.app.models.report import Report
-    from backend.app.models.user import User
+    from app.models.message import Message
+    from app.models.persona import Persona
+    from app.models.report import Report
+    from app.models.user import User
 
 
 class InterviewSession(Base):

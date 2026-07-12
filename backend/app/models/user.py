@@ -9,10 +9,10 @@ from uuid import UUID, uuid4
 from sqlalchemy import DateTime, String, Uuid
 from sqlalchemy.orm import Mapped, mapped_column, relationship
 
-from backend.app.db.base import Base
+from app.db.base import Base
 
 if TYPE_CHECKING:
-    from backend.app.models.interview_session import InterviewSession
+    from app.models.interview_session import InterviewSession
 
 
 class User(Base):
