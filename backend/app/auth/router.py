@@ -8,9 +8,9 @@ from typing import Annotated
 from fastapi import APIRouter, Depends, HTTPException, status
 from sqlalchemy.orm import Session
 
-from backend.app.db.session import get_db
-from backend.app.schemas.user import UserCreate, UserResponse
-from backend.app.services.user_service import DuplicateEmailError, create_user
+from app.db.session import get_db
+from app.schemas.user import UserCreate, UserResponse
+from app.services.user_service import DuplicateEmailError, create_user
 
 router = APIRouter(prefix="/auth", tags=["auth"])
 

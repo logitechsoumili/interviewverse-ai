@@ -8,8 +8,8 @@ from typing import AsyncIterator
 
 from fastapi import FastAPI
 
-from backend.app.api import api_router
-from backend.app.core.config import settings
+from app.api import api_router
+from app.core.config import settings
 
 logger = logging.getLogger(__name__)
 
@@ -29,4 +29,3 @@ app = FastAPI(
 )
 
 app.include_router(api_router)
-

@@ -8,7 +8,7 @@ from typing import Any
 from jose import jwt
 from jose.exceptions import ExpiredSignatureError, JWTError
 
-from backend.app.core.config import settings
+from app.core.config import settings
 
 
 def create_access_token(
@@ -50,8 +50,8 @@ def decode_access_token(token: str) -> dict[str, Any]:
         JWTError: If the token is invalid or the signature cannot be verified.
     """
     try:
-        secret_key: str = settings.secret_key  # type: ignore[attr-defined]
-        algorithm: str = settings.algorithm  # type: ignore[attr-defined]
+        secret_key: str = settings.secret_key  
+        algorithm: str = settings.algorithm  
         payload = jwt.decode(
             token,
             secret_key,

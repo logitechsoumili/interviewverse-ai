@@ -6,9 +6,9 @@ from sqlalchemy import select
 from sqlalchemy.exc import IntegrityError
 from sqlalchemy.orm import Session
 
-from backend.app.auth.hashing import hash_password
-from backend.app.models.user import User
-from backend.app.schemas.user import UserCreate
+from app.auth.hashing import hash_password
+from app.models.user import User
+from app.schemas.user import UserCreate
 
 
 class DuplicateEmailError(ValueError):
