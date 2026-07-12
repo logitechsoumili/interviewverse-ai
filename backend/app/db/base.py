@@ -1,0 +1,12 @@
+"""Declarative base for SQLAlchemy ORM models."""
+
+from __future__ import annotations
+
+from sqlalchemy.orm import DeclarativeBase
+
+
+class Base(DeclarativeBase):
+    """Base class inherited by all ORM models in the application."""
+
+    pass
+
