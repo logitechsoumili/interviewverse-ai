@@ -12,9 +12,9 @@ from sqlalchemy import engine_from_config, pool
 # Ensure the project root is importable when Alembic runs from the repo root.
 sys.path.append(str(Path(__file__).resolve().parents[1]))
 
-from app import models  # noqa: F401  # Import models to populate Base.metadata.
-from app.core.config import settings
-from app.db.base import Base
+from backend.app import models  # noqa: F401  # Import models to populate Base.metadata.
+from backend.app.core.config import settings
+from backend.app.db.base import Base
 
 config = context.config
 
