@@ -14,7 +14,7 @@ from backend.app.services.ai.reports.models import ReportSection, ReportResult
 from backend.app.services.ai.reports.service import ReportService
 
 @pytest.fixture
-def mock_interview_service() -> MagicMock:
+def mock_interview_repository() -> MagicMock:
     return MagicMock()
 
 @pytest.fixture
@@ -27,12 +27,12 @@ def mock_evaluation_repository() -> MagicMock:
 
 @pytest.fixture
 def report_service(
-    mock_interview_service: MagicMock,
+    mock_interview_repository: MagicMock,
     mock_persona_service: MagicMock,
     mock_evaluation_repository: MagicMock,
 ) -> ReportService:
     return ReportService(
-        interview_service=mock_interview_service,
+        interview_repository=mock_interview_repository,
         persona_service=mock_persona_service,
         evaluation_repository=mock_evaluation_repository,
     )
@@ -138,7 +138,7 @@ def test_build_markdown_report(report_service: ReportService, sample_evaluation:
 
 def test_generate_report_success(
     report_service: ReportService,
-    mock_interview_service: MagicMock,
+    mock_interview_repository: MagicMock,
     mock_persona_service: MagicMock,
     mock_evaluation_repository: MagicMock,
     sample_interview: InterviewSession,
@@ -147,7 +147,7 @@ def test_generate_report_success(
 ) -> None:
     interview_id = "interview-456"
     
-    mock_interview_service.repository.get_interview.return_value = sample_interview
+    mock_interview_repository.get_interview.return_value = sample_interview
     mock_evaluation_repository.get_evaluation.return_value = sample_evaluation
     mock_persona_service.get_persona.return_value = sample_persona
 
@@ -167,13 +167,13 @@ def test_generate_report_success(
     assert result.generated_at.tzinfo == timezone.utc
 
     # Verify calls
-    mock_interview_service.repository.get_interview.assert_called_once_with(interview_id)
+    mock_interview_repository.get_interview.assert_called_once_with(interview_id)
     mock_evaluation_repository.get_evaluation.assert_called_once_with(interview_id)
     mock_persona_service.get_persona.assert_called_once_with(PersonaType.SWE)
 
 def test_generate_report_validation_failures(
     report_service: ReportService,
-    mock_interview_service: MagicMock,
+    mock_interview_repository: MagicMock,
     mock_evaluation_repository: MagicMock,
 ) -> None:
     # 1. Empty ID
@@ -182,13 +182,13 @@ def test_generate_report_validation_failures(
     assert "cannot be empty" in str(exc.value)
 
     # 2. Missing Interview
-    mock_interview_service.repository.get_interview.side_effect = Exception("Not Found")
+    mock_interview_repository.get_interview.side_effect = Exception("Not Found")
     with pytest.raises(InvalidReportError) as exc:
         report_service.generate_report("missing-interview")
     assert "was not found" in str(exc.value)
 
     # 3. Interview Status not COMPLETED
-    mock_interview_service.repository.get_interview.side_effect = None
+    mock_interview_repository.get_interview.side_effect = None
     incomplete_interview = InterviewSession(
         interview_id="active-interview",
         session_id="active-interview",
@@ -198,7 +198,7 @@ def test_generate_report_validation_failures(
         difficulty="mid",
         created_at=datetime.now(timezone.utc),
     )
-    mock_interview_service.repository.get_interview.return_value = incomplete_interview
+    mock_interview_repository.get_interview.return_value = incomplete_interview
     with pytest.raises(InvalidReportError) as exc:
         report_service.generate_report("active-interview")
     assert "must be in 'completed' state" in str(exc.value)
@@ -213,7 +213,7 @@ def test_generate_report_validation_failures(
         difficulty="mid",
         created_at=datetime.now(timezone.utc),
     )
-    mock_interview_service.repository.get_interview.return_value = completed_interview
+    mock_interview_repository.get_interview.return_value = completed_interview
     mock_evaluation_repository.get_evaluation.side_effect = EvaluationNotFoundError("Not Found")
     with pytest.raises(InvalidReportError) as exc:
         report_service.generate_report("completed-interview")
@@ -291,7 +291,7 @@ def test_serialization_and_deserialization(sample_evaluation: EvaluationResult) 
 
 def test_determinism_under_same_inputs(
     report_service: ReportService,
-    mock_interview_service: MagicMock,
+    mock_interview_repository: MagicMock,
     mock_persona_service: MagicMock,
     mock_evaluation_repository: MagicMock,
     sample_interview: InterviewSession,
@@ -300,7 +300,7 @@ def test_determinism_under_same_inputs(
 ) -> None:
     interview_id = "interview-456"
     
-    mock_interview_service.repository.get_interview.return_value = sample_interview
+    mock_interview_repository.get_interview.return_value = sample_interview
     mock_evaluation_repository.get_evaluation.return_value = sample_evaluation
     mock_persona_service.get_persona.return_value = sample_persona
 
@@ -323,7 +323,7 @@ def test_determinism_under_same_inputs(
 
 def test_markdown_structure_headings(
     report_service: ReportService,
-    mock_interview_service: MagicMock,
+    mock_interview_repository: MagicMock,
     mock_persona_service: MagicMock,
     mock_evaluation_repository: MagicMock,
     sample_interview: InterviewSession,
@@ -331,7 +331,7 @@ def test_markdown_structure_headings(
     sample_persona: Persona,
 ) -> None:
     interview_id = "interview-456"
-    mock_interview_service.repository.get_interview.return_value = sample_interview
+    mock_interview_repository.get_interview.return_value = sample_interview
     mock_evaluation_repository.get_evaluation.return_value = sample_evaluation
     mock_persona_service.get_persona.return_value = sample_persona
 

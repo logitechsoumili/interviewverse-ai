@@ -9,7 +9,7 @@ from backend.app.services.ai.personas.models import PersonaType
 from backend.app.services.ai.conversation.service import ConversationService
 from backend.app.services.ai.prompts.builders import PromptBuilder
 from backend.app.services.ai.gemini.service import GeminiService
-from backend.app.services.ai.interview.service import InterviewService
+from backend.app.services.ai.interview.repository import InterviewRepository
 from backend.app.services.ai.interview.models import InterviewStatus
 from backend.app.services.ai.evaluation.models import EvaluationResult
 from backend.app.services.ai.evaluation.exceptions import (
@@ -28,7 +28,7 @@ class EvaluationService:
         gemini_service: GeminiService,
         conversation_service: ConversationService,
         persona_service: PersonaService,
-        interview_service: InterviewService,
+        interview_repository: InterviewRepository,
         evaluation_repository: EvaluationRepository,
     ) -> None:
         """Initializes the service with constructor-injected dependencies.
@@ -38,14 +38,14 @@ class EvaluationService:
             gemini_service: Injected GeminiService.
             conversation_service: Injected ConversationService.
             persona_service: Injected PersonaService.
-            interview_service: Injected InterviewService.
+            interview_repository: Injected InterviewRepository.
             evaluation_repository: Injected EvaluationRepository.
         """
         self.prompt_builder = prompt_builder
         self.gemini_service = gemini_service
         self.conversation_service = conversation_service
         self.persona_service = persona_service
-        self.interview_service = interview_service
+        self.interview_repository = interview_repository
         self.evaluation_repository = evaluation_repository
 
     def _validate_non_empty(self, field_name: str, value: str) -> None:
@@ -162,7 +162,7 @@ class EvaluationService:
 
         # 1. Retrieve the interview session
         try:
-            session = self.interview_service.repository.get_interview(interview_id)
+            session = self.interview_repository.get_interview(interview_id)
         except Exception as e:
             raise InvalidEvaluationError(f"Interview session '{interview_id}' was not found.") from e
 

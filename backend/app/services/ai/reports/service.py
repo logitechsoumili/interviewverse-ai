@@ -4,7 +4,7 @@ from typing import List, Optional
 
 from backend.app.core.logging import StructuredLogger
 from backend.app.services.ai.personas.service import PersonaService
-from backend.app.services.ai.interview.service import InterviewService
+from backend.app.services.ai.interview.repository import InterviewRepository
 from backend.app.services.ai.interview.models import InterviewStatus
 from backend.app.services.ai.evaluation.repository import EvaluationRepository
 from backend.app.services.ai.evaluation.models import EvaluationResult
@@ -23,18 +23,18 @@ class ReportService:
 
     def __init__(
         self,
-        interview_service: InterviewService,
+        interview_repository: InterviewRepository,
         persona_service: PersonaService,
         evaluation_repository: EvaluationRepository,
     ) -> None:
         """Initializes the ReportService with constructor-injected dependencies.
         
         Args:
-            interview_service: Injected InterviewService.
+            interview_repository: Injected InterviewRepository.
             persona_service: Injected PersonaService.
             evaluation_repository: Injected EvaluationRepository.
         """
-        self.interview_service = interview_service
+        self.interview_repository = interview_repository
         self.persona_service = persona_service
         self.evaluation_repository = evaluation_repository
 
@@ -171,7 +171,7 @@ class ReportService:
 
         # 2. Retrieve interview & 3. Validate interview exists
         try:
-            interview = self.interview_service.repository.get_interview(interview_id)
+            interview = self.interview_repository.get_interview(interview_id)
         except Exception as e:
             raise InvalidReportError(f"Interview session '{interview_id}' was not found.") from e
 

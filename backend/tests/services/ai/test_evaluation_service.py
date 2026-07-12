@@ -33,7 +33,7 @@ def mock_persona_service() -> MagicMock:
     return MagicMock()
 
 @pytest.fixture
-def mock_interview_service() -> MagicMock:
+def mock_interview_repository() -> MagicMock:
     return MagicMock()
 
 @pytest.fixture
@@ -46,7 +46,7 @@ def evaluation_service(
     mock_gemini_service: MagicMock,
     mock_conversation_service: MagicMock,
     mock_persona_service: MagicMock,
-    mock_interview_service: MagicMock,
+    mock_interview_repository: MagicMock,
     mock_evaluation_repository: MagicMock,
 ) -> EvaluationService:
     return EvaluationService(
@@ -54,7 +54,7 @@ def evaluation_service(
         gemini_service=mock_gemini_service,
         conversation_service=mock_conversation_service,
         persona_service=mock_persona_service,
-        interview_service=mock_interview_service,
+        interview_repository=mock_interview_repository,
         evaluation_repository=mock_evaluation_repository,
     )
 
@@ -213,7 +213,7 @@ def test_parse_evaluation_response_validation_failures(evaluation_service: Evalu
 @pytest.mark.anyio
 async def test_evaluate_interview_success(
     evaluation_service: EvaluationService,
-    mock_interview_service: MagicMock,
+    mock_interview_repository: MagicMock,
     mock_conversation_service: MagicMock,
     mock_persona_service: MagicMock,
     mock_prompt_builder: MagicMock,
@@ -232,7 +232,7 @@ async def test_evaluate_interview_success(
         difficulty="mid",
         created_at=datetime.now(timezone.utc),
     )
-    mock_interview_service.repository.get_interview.return_value = mock_session
+    mock_interview_repository.get_interview.return_value = mock_session
 
     # Mock Conversation History
     mock_history = [
@@ -281,7 +281,7 @@ async def test_evaluate_interview_success(
     assert result.summary.strengths == ["Clear explanation of patterns"]
     
     # Verify interactions
-    mock_interview_service.repository.get_interview.assert_called_once_with(interview_id)
+    mock_interview_repository.get_interview.assert_called_once_with(interview_id)
     mock_conversation_service.build_llm_ready_history.assert_called_once_with(interview_id)
     mock_persona_service.get_prompt_context.assert_called_once_with(persona_id)
     mock_prompt_builder.build_interview_evaluation_prompt.assert_called_once_with(
@@ -298,10 +298,10 @@ async def test_evaluate_interview_success(
 @pytest.mark.anyio
 async def test_evaluate_interview_session_not_found(
     evaluation_service: EvaluationService,
-    mock_interview_service: MagicMock,
+    mock_interview_repository: MagicMock,
 ) -> None:
     interview_id = "missing-id"
-    mock_interview_service.repository.get_interview.side_effect = Exception("Not found")
+    mock_interview_repository.get_interview.side_effect = Exception("Not found")
 
     with pytest.raises(InvalidEvaluationError) as exc:
         await evaluation_service.evaluate_interview(interview_id)
@@ -310,7 +310,7 @@ async def test_evaluate_interview_session_not_found(
 @pytest.mark.anyio
 async def test_evaluate_interview_status_not_completed(
     evaluation_service: EvaluationService,
-    mock_interview_service: MagicMock,
+    mock_interview_repository: MagicMock,
 ) -> None:
     interview_id = "active-id"
     mock_session = InterviewSession(
@@ -322,7 +322,7 @@ async def test_evaluate_interview_status_not_completed(
         difficulty="mid",
         created_at=datetime.now(timezone.utc),
     )
-    mock_interview_service.repository.get_interview.return_value = mock_session
+    mock_interview_repository.get_interview.return_value = mock_session
 
     with pytest.raises(InvalidEvaluationError) as exc:
         await evaluation_service.evaluate_interview(interview_id)
@@ -331,7 +331,7 @@ async def test_evaluate_interview_status_not_completed(
 @pytest.mark.anyio
 async def test_evaluate_interview_empty_history(
     evaluation_service: EvaluationService,
-    mock_interview_service: MagicMock,
+    mock_interview_repository: MagicMock,
     mock_conversation_service: MagicMock,
 ) -> None:
     interview_id = "empty-history-id"
@@ -344,7 +344,7 @@ async def test_evaluate_interview_empty_history(
         difficulty="mid",
         created_at=datetime.now(timezone.utc),
     )
-    mock_interview_service.repository.get_interview.return_value = mock_session
+    mock_interview_repository.get_interview.return_value = mock_session
     mock_conversation_service.build_llm_ready_history.return_value = []
 
     with pytest.raises(InvalidEvaluationError) as exc:
@@ -354,7 +354,7 @@ async def test_evaluate_interview_empty_history(
 @pytest.mark.anyio
 async def test_evaluate_interview_gemini_failure(
     evaluation_service: EvaluationService,
-    mock_interview_service: MagicMock,
+    mock_interview_repository: MagicMock,
     mock_conversation_service: MagicMock,
     mock_persona_service: MagicMock,
     mock_prompt_builder: MagicMock,
@@ -370,7 +370,7 @@ async def test_evaluate_interview_gemini_failure(
         difficulty="mid",
         created_at=datetime.now(timezone.utc),
     )
-    mock_interview_service.repository.get_interview.return_value = mock_session
+    mock_interview_repository.get_interview.return_value = mock_session
     mock_conversation_service.build_llm_ready_history.return_value = [
         ConversationMessage(role="interviewer", content="Q")
     ]
