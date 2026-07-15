@@ -1,5 +1,7 @@
 from typing import List, Optional
 from datetime import datetime, timezone
+from uuid import UUID
+import uuid
 
 from backend.app.services.ai.personas.service import PersonaService
 from backend.app.services.ai.personas.models import PersonaType
@@ -17,7 +19,7 @@ from backend.app.services.ai.interview.exceptions import (
 )
 
 class InterviewService:
-    """Orchestrates technical interview execution using existing AI platform components."""
+    """Orchestrates technical interview execution using existing AI platform components with ownership boundaries."""
 
     def __init__(
         self,
@@ -89,14 +91,16 @@ class InterviewService:
         persona_id: PersonaType,
         topics: List[str],
         difficulty: str,
+        user_id: Optional[UUID] = None,
     ) -> InterviewTurnResult:
-        """Validates the persona, creates sessions, generates the opening question, and stores it.
+        """Validates the persona, creates sessions, generates the opening question, and stores it with ownership.
         
         Args:
             interview_id: Unique identifier for this interview session.
             persona_id: Target interviewer persona ID.
             topics: Focus topics.
             difficulty: Interview difficulty level.
+            user_id: Optional owner user ID.
             
         Returns:
             The InterviewTurnResult containing the opening question.
@@ -112,9 +116,12 @@ class InterviewService:
         for idx, topic in enumerate(topics):
             self._validate_non_empty(f"Topic[{idx}]", topic)
             
-        # 1. Validate persona (will raise PersonaNotFoundError if missing or invalid)
-        self.persona_service.get_persona(persona_id)
-        persona_context_obj = self.persona_service.get_prompt_context(persona_id)
+        if not user_id:
+            user_id = uuid.UUID("00000000-0000-0000-0000-000000000000")
+
+        # 1. Validate persona and get context under user ownership boundaries
+        self.persona_service.get_persona(persona_id.value if hasattr(persona_id, 'value') else str(persona_id), user_id=user_id)
+        persona_context_obj = self.persona_service.get_prompt_context(persona_id.value if hasattr(persona_id, 'value') else str(persona_id), user_id=user_id)
 
         # 2. Create conversation session
         self.conversation_service.create_session(session_id=interview_id, persona_id=persona_id)
@@ -124,6 +131,7 @@ class InterviewService:
             interview_id=interview_id,
             session_id=interview_id,
             persona_id=persona_id,
+            user_id=user_id,
             status=InterviewStatus.IN_PROGRESS,
             topics=topics,
             difficulty=difficulty,
@@ -132,7 +140,6 @@ class InterviewService:
         self.repository.create_interview(session)
 
         # 4. Generate opening question
-        # Since PromptBuilder.build_interview_prompt requires a non-empty history, we seed it
         history = [
             ConversationMessage(role="system", content="[System: Initiate the technical interview.]")
         ]
@@ -162,12 +169,14 @@ class InterviewService:
         self,
         interview_id: str,
         candidate_response: str,
+        user_id: Optional[UUID] = None,
     ) -> InterviewTurnResult:
         """Stores candidate response, builds prompt, and generates a unique follow-up question.
         
         Args:
             interview_id: Unique identifier for the interview session.
             candidate_response: Candidate response string.
+            user_id: Optional owner user ID.
             
         Returns:
             The InterviewTurnResult containing the follow-up question.
@@ -180,8 +189,8 @@ class InterviewService:
         self._validate_non_empty("Interview ID", interview_id)
         self._validate_non_empty("Candidate response", candidate_response)
 
-        # 1. Verify session exists and is active
-        session = self.repository.get_interview(interview_id)
+        # 1. Verify session exists, is active, and belongs to user
+        session = self.repository.get_interview(interview_id, user_id=user_id)
         if session.status == InterviewStatus.COMPLETED:
             raise InterviewAlreadyCompletedError("Cannot process response for a completed interview.")
 
@@ -192,7 +201,10 @@ class InterviewService:
         history = self.conversation_service.build_llm_ready_history(interview_id)
 
         # 4. Generate follow-up question
-        persona_context_obj = self.persona_service.get_prompt_context(session.persona_id)
+        persona_context_obj = self.persona_service.get_prompt_context(
+            session.persona_id.value if hasattr(session.persona_id, 'value') else str(session.persona_id),
+            user_id=user_id
+        )
         
         follow_up_question = await self._generate_unique_question(
             interview_id=interview_id,
@@ -214,11 +226,12 @@ class InterviewService:
             turn_count=turn_count
         )
 
-    def complete_interview(self, interview_id: str) -> InterviewTurnResult:
+    def complete_interview(self, interview_id: str, user_id: Optional[UUID] = None) -> InterviewTurnResult:
         """Marks the interview as completed and deactivates the conversation session.
         
         Args:
             interview_id: Unique identifier for the interview session.
+            user_id: Optional owner user ID.
             
         Returns:
             InterviewTurnResult with is_final=True.
@@ -229,13 +242,13 @@ class InterviewService:
         """
         self._validate_non_empty("Interview ID", interview_id)
 
-        # Verify existence and completed status
-        session = self.repository.get_interview(interview_id)
+        # Verify existence, ownership, and completed status
+        session = self.repository.get_interview(interview_id, user_id=user_id)
         if session.status == InterviewStatus.COMPLETED:
             raise InterviewAlreadyCompletedError("Interview is already completed.")
 
         # 1. Update interview session status in repository
-        self.repository.complete_interview(interview_id)
+        self.repository.complete_interview(interview_id, user_id=user_id)
 
         # 2. Deactivate conversation session
         conv_session = self.conversation_service.repository.get_session(interview_id)

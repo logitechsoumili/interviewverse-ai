@@ -2,6 +2,7 @@ import json
 import re
 from datetime import datetime, timezone
 from typing import List, Optional
+from uuid import UUID
 
 from backend.app.core.logging import StructuredLogger
 from backend.app.services.ai.personas.service import PersonaService
@@ -76,10 +77,8 @@ class EvaluationService:
         markdown_match = re.search(r"```(?:json)?\s*(.*?)\s*```", cleaned, re.DOTALL | re.IGNORECASE)
         if markdown_match:
             candidate = markdown_match.group(1).strip()
-            # If candidate starts with { and ends with }, we can return it directly
             if candidate.startswith("{") and candidate.endswith("}"):
                 return candidate
-            # Otherwise fall back to brace searching in the matched block
             cleaned = candidate
 
         # 2. Find the first '{' and the last '}' to extract surrounding text
@@ -144,11 +143,12 @@ class EvaluationService:
             StructuredLogger.error(f"Failed to validate evaluation result schema: {str(e)}", extra={"data": log_data})
             raise InvalidEvaluationError(f"Validation failed for evaluation result schema: {str(e)}") from e
 
-    async def evaluate_interview(self, interview_id: str) -> EvaluationResult:
+    async def evaluate_interview(self, interview_id: str, user_id: Optional[UUID] = None) -> EvaluationResult:
         """Orchestrates the evaluation of a completed interview session.
         
         Args:
             interview_id: Unique identifier for the interview session.
+            user_id: Optional owner user ID.
             
         Returns:
             The generated and validated EvaluationResult.
@@ -160,9 +160,12 @@ class EvaluationService:
         """
         self._validate_non_empty("Interview ID", interview_id)
 
-        # 1. Retrieve the interview session
+        # 1. Retrieve the interview session under ownership boundaries
         try:
-            session = self.interview_repository.get_interview(interview_id)
+            if user_id is not None:
+                session = self.interview_repository.get_interview(interview_id, user_id=user_id)
+            else:
+                session = self.interview_repository.get_interview(interview_id)
         except Exception as e:
             raise InvalidEvaluationError(f"Interview session '{interview_id}' was not found.") from e
 
@@ -188,9 +191,13 @@ class EvaluationService:
             extra={"interview_id": interview_id}
         )
 
-        # 4. Retrieve persona context using PersonaService
+        # 4. Retrieve persona context using PersonaService under ownership boundaries
         try:
-            persona_prompt_context = self.persona_service.get_prompt_context(session.persona_id)
+            p_id = session.persona_id.value if hasattr(session.persona_id, 'value') else str(session.persona_id)
+            if user_id is not None:
+                persona_prompt_context = self.persona_service.get_prompt_context(p_id, user_id=user_id)
+            else:
+                persona_prompt_context = self.persona_service.get_prompt_context(p_id)
         except Exception as e:
             raise EvaluationError(f"Failed to retrieve persona context: {str(e)}") from e
 
@@ -216,5 +223,19 @@ class EvaluationService:
 
         # 7. Parse response, save to repository & return EvaluationResult
         evaluation = self.parse_evaluation_response(raw_response, persona_id=session.persona_id)
-        self.evaluation_repository.save_evaluation(interview_id, evaluation)
+        if user_id is not None:
+            self.evaluation_repository.save_evaluation(interview_id, evaluation, user_id=user_id)
+        else:
+            self.evaluation_repository.save_evaluation(interview_id, evaluation)
         return evaluation
+
+    def get_evaluation(self, interview_id: str, user_id: Optional[UUID] = None) -> EvaluationResult:
+        """Retrieves an existing EvaluationResult, enforcing user ownership."""
+        self._validate_non_empty("Interview ID", interview_id)
+        # Check interview session existence and ownership first
+        if user_id is not None:
+            self.interview_repository.get_interview(interview_id, user_id=user_id)
+            return self.evaluation_repository.get_evaluation(interview_id, user_id=user_id)
+        else:
+            self.interview_repository.get_interview(interview_id)
+            return self.evaluation_repository.get_evaluation(interview_id)

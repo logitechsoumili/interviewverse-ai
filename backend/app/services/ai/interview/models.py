@@ -1,6 +1,7 @@
 from enum import Enum
 from datetime import datetime, timezone
 from typing import List, Optional
+from uuid import UUID
 from pydantic import BaseModel, Field
 from backend.app.services.ai.personas.models import PersonaType
 
@@ -20,6 +21,7 @@ class InterviewSession(BaseModel):
     interview_id: str = Field(min_length=1, description="Unique identifier for the interview.")
     session_id: str = Field(min_length=1, description="Conversation session identifier.")
     persona_id: PersonaType = Field(description="The persona identifier.")
+    user_id: Optional[UUID] = Field(default=None, description="Owner user ID.")
     status: InterviewStatus = Field(default=InterviewStatus.STARTING, description="Current interview status.")
     topics: List[str] = Field(description="Focus areas/topics for this interview.")
     difficulty: str = Field(min_length=1, description="Target difficulty level.")
