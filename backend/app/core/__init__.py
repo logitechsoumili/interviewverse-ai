@@ -1,1 +1,1 @@
-# Core module initialization
+"""Core application configuration package."""

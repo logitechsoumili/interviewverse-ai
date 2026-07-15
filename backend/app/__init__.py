@@ -1,0 +1,2 @@
+"""InterviewVerse AI application package."""
+

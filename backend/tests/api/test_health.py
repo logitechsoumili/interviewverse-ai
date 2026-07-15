@@ -4,10 +4,13 @@ from backend.app.main import app
 client = TestClient(app)
 
 def test_health_check() -> None:
-    """Verifies that GET /health returns status ok."""
+    """Verifies that GET /health returns status healthy."""
     response = client.get("/health")
     assert response.status_code == 200
-    assert response.json() == {"status": "ok"}
+    assert response.json() == {
+        "status": "healthy",
+        "service": "InterviewVerse AI",
+    }
 
 def test_root_metadata() -> None:
     """Verifies that GET / returns the correct service metadata."""

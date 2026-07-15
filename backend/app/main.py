@@ -1,19 +1,37 @@
+"""FastAPI application entrypoint for InterviewVerse AI."""
+
+from __future__ import annotations
+
+import logging
+from contextlib import asynccontextmanager
+from typing import AsyncIterator
+
 from fastapi import FastAPI
-from backend.app.api.personas.router import router as personas_router
-from backend.app.api.interviews.router import router as interviews_router
-from backend.app.api.evaluations.router import router as evaluations_router
-from backend.app.api.reports.router import router as reports_router
+
 from backend.app.api.exceptions import register_exception_handlers
+from app.api import api_router
+from app.core.config import settings
+
+logger = logging.getLogger(__name__)
+
+
+@asynccontextmanager
+async def lifespan(_: FastAPI) -> AsyncIterator[None]:
+    """Manage application startup and shutdown events."""
+    logger.info("InterviewVerse AI backend starting...")
+    yield
+
 
 def create_app() -> FastAPI:
     """FastAPI application factory configuring metadata, routes, and exception handlers."""
     app = FastAPI(
-        title="InterviewVerse AI",
-        version="1.0.0",
-        description="AI Interview Simulation Platform",
+        title=settings.app_name,
+        version=settings.app_version,
+        debug=settings.debug,
+        lifespan=lifespan,
     )
 
-    # Centralized exception handlers registration
+    # Centralized exception handlers registration from HEAD
     register_exception_handlers(app)
 
     # Root metadata endpoint
@@ -22,20 +40,13 @@ def create_app() -> FastAPI:
         return {
             "title": app.title,
             "version": app.version,
-            "description": app.description,
+            "description": "AI Interview Simulation Platform",
         }
 
-    # Health check endpoint
-    @app.get("/health", tags=["Health"])
-    def health_check() -> dict:
-        return {"status": "ok"}
-
-    # Register API routers
-    app.include_router(personas_router)
-    app.include_router(interviews_router)
-    app.include_router(evaluations_router)
-    app.include_router(reports_router)
+    # Register aggregated API router (includes health, auth, and AI features)
+    app.include_router(api_router)
 
     return app
+
 
 app = create_app()
