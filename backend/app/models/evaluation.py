@@ -1,11 +1,12 @@
+"""Evaluation ORM model."""
+
 from __future__ import annotations
 
 from datetime import datetime, timezone
 from typing import TYPE_CHECKING
-
 from uuid import UUID, uuid4
 
-from sqlalchemy import DateTime, ForeignKey, JSON, Text, Uuid
+from sqlalchemy import DateTime, ForeignKey, Integer, JSON, Uuid
 from sqlalchemy.orm import Mapped, mapped_column, relationship
 
 from app.db.base import Base
@@ -15,10 +16,10 @@ if TYPE_CHECKING:
     from app.models.user import User
 
 
-class Report(Base):
-    """Evaluation report generated for an interview session."""
+class Evaluation(Base):
+    """Evaluation generated for an interview session."""
 
-    __tablename__ = "reports"
+    __tablename__ = "evaluations"
 
     id: Mapped[UUID] = mapped_column(Uuid(as_uuid=True), primary_key=True, default=uuid4)
     session_id: Mapped[UUID] = mapped_column(
@@ -33,19 +34,20 @@ class Report(Base):
         nullable=False,
         index=True,
     )
-    executive_summary: Mapped[dict] = mapped_column(JSON, nullable=False)
-    performance_overview: Mapped[dict] = mapped_column(JSON, nullable=False)
+    overall_score: Mapped[int] = mapped_column(Integer, nullable=False)
+    communication_score: Mapped[int] = mapped_column(Integer, nullable=False)
+    technical_score: Mapped[int] = mapped_column(Integer, nullable=False)
+    confidence_score: Mapped[int] = mapped_column(Integer, nullable=False)
     strengths: Mapped[list[str]] = mapped_column(JSON, nullable=False)
     weaknesses: Mapped[list[str]] = mapped_column(JSON, nullable=False)
     recommendations: Mapped[list[str]] = mapped_column(JSON, nullable=False)
     learning_roadmap: Mapped[list[str]] = mapped_column(JSON, nullable=False)
-    markdown_report: Mapped[str] = mapped_column(Text, nullable=False)
-    generated_at: Mapped[datetime] = mapped_column(
+    evaluated_at: Mapped[datetime] = mapped_column(
         DateTime(timezone=True),
         nullable=False,
         default=lambda: datetime.now(timezone.utc),
     )
 
-    interview_session: Mapped[InterviewSession] = relationship(back_populates="report")
-    user: Mapped[User] = relationship(back_populates="reports")
-
+    # Relationships
+    interview_session: Mapped[InterviewSession] = relationship(back_populates="evaluation")
+    user: Mapped[User] = relationship(back_populates="evaluations")

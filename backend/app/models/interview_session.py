@@ -1,17 +1,17 @@
-"""Interview session ORM model."""
-
 from __future__ import annotations
 
 from datetime import datetime, timezone
 from typing import TYPE_CHECKING
 from uuid import UUID, uuid4
 
-from sqlalchemy import DateTime, ForeignKey, Uuid
+
+from sqlalchemy import DateTime, ForeignKey, JSON, String, Uuid
 from sqlalchemy.orm import Mapped, mapped_column, relationship
 
 from app.db.base import Base
 
 if TYPE_CHECKING:
+    from app.models.evaluation import Evaluation
     from app.models.message import Message
     from app.models.persona import Persona
     from app.models.report import Report
@@ -29,17 +29,20 @@ class InterviewSession(Base):
         ForeignKey("users.id", ondelete="CASCADE"),
         nullable=False,
     )
-    persona_id: Mapped[UUID] = mapped_column(
-        Uuid(as_uuid=True),
+    persona_id: Mapped[str] = mapped_column(
+        String(50),
         ForeignKey("personas.id", ondelete="RESTRICT"),
         nullable=False,
     )
-    started_at: Mapped[datetime] = mapped_column(
+    topics: Mapped[list[str]] = mapped_column(JSON, nullable=False)
+    difficulty: Mapped[str] = mapped_column(String(50), nullable=False)
+    status: Mapped[str] = mapped_column(String(50), nullable=False)
+    created_at: Mapped[datetime] = mapped_column(
         DateTime(timezone=True),
         nullable=False,
         default=lambda: datetime.now(timezone.utc),
     )
-    ended_at: Mapped[datetime | None] = mapped_column(DateTime(timezone=True), nullable=True)
+    completed_at: Mapped[datetime | None] = mapped_column(DateTime(timezone=True), nullable=True)
 
     user: Mapped[User] = relationship(back_populates="interview_sessions")
     persona: Mapped[Persona] = relationship(back_populates="interview_sessions")
@@ -54,3 +57,10 @@ class InterviewSession(Base):
         single_parent=True,
         uselist=False,
     )
+    evaluation: Mapped[Evaluation | None] = relationship(
+        back_populates="interview_session",
+        cascade="all, delete-orphan",
+        single_parent=True,
+        uselist=False,
+    )
+

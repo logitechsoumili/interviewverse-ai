@@ -1,5 +1,6 @@
 """ORM models for InterviewVerse AI."""
 
+from app.models.evaluation import Evaluation
 from app.models.interview_session import InterviewSession
 from app.models.message import Message
 from app.models.persona import Persona
@@ -12,4 +13,6 @@ __all__ = [
     "InterviewSession",
     "Message",
     "Report",
+    "Evaluation",
 ]
+

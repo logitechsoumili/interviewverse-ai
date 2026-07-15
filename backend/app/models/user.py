@@ -12,7 +12,10 @@ from sqlalchemy.orm import Mapped, mapped_column, relationship
 from app.db.base import Base
 
 if TYPE_CHECKING:
+    from app.models.evaluation import Evaluation
     from app.models.interview_session import InterviewSession
+    from app.models.persona import Persona
+    from app.models.report import Report
 
 
 class User(Base):
@@ -34,3 +37,16 @@ class User(Base):
         back_populates="user",
         cascade="all, delete-orphan",
     )
+    personas: Mapped[list[Persona]] = relationship(
+        back_populates="user",
+        cascade="all, delete-orphan",
+    )
+    evaluations: Mapped[list[Evaluation]] = relationship(
+        back_populates="user",
+        cascade="all, delete-orphan",
+    )
+    reports: Mapped[list[Report]] = relationship(
+        back_populates="user",
+        cascade="all, delete-orphan",
+    )
+
