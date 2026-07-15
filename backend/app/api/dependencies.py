@@ -1,8 +1,11 @@
 from fastapi import Depends
+from sqlalchemy.orm import Session
+from app.db.session import get_db
 
 # Import repositories
 from backend.app.services.ai.conversation.repository import ConversationRepository
 from backend.app.services.ai.interview.repository import InterviewRepository
+
 from backend.app.services.ai.evaluation.repository import EvaluationRepository
 from backend.app.services.ai.personas.repository import PersonaRepository
 
@@ -84,12 +87,14 @@ def get_report_service(
     interview_repository: InterviewRepository = Depends(get_interview_repository),
     persona_service: PersonaService = Depends(get_persona_service),
     evaluation_repository: EvaluationRepository = Depends(get_evaluation_repository),
+    db: Session = Depends(get_db),
 ) -> ReportService:
     """Dependency provider that instantiates and returns a ReportService."""
     return ReportService(
         interview_repository=interview_repository,
         persona_service=persona_service,
         evaluation_repository=evaluation_repository,
+        db=db,
     )
 
 
@@ -100,10 +105,8 @@ from fastapi import HTTPException, status
 from fastapi.security import OAuth2PasswordBearer
 from jose import JWTError
 from jose.exceptions import ExpiredSignatureError
-from sqlalchemy.orm import Session
 
 from app.auth.jwt import decode_access_token
-from app.db.session import get_db
 from app.models.user import User
 from app.services.user_service import get_user_by_id
 

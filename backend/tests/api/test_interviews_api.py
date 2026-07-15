@@ -1,8 +1,9 @@
 import pytest
+import uuid
 from fastapi.testclient import TestClient
 from unittest.mock import MagicMock, AsyncMock
 from backend.app.main import app
-from backend.app.api.dependencies import get_interview_service, get_conversation_service
+from backend.app.api.dependencies import get_interview_service, get_conversation_service, get_current_user
 from backend.app.services.ai.interview.exceptions import (
     InterviewNotFoundError,
     InterviewAlreadyCompletedError,
@@ -11,6 +12,10 @@ from backend.app.services.ai.interview.exceptions import (
 )
 from backend.app.services.ai.personas.models import PersonaType
 from backend.app.services.ai.interview.models import InterviewTurnResult
+from app.models.user import User
+
+mock_user_id = uuid.uuid4()
+mock_user = User(id=mock_user_id, email="test@example.com", full_name="Test User")
 
 @pytest.fixture
 def mock_interview_service() -> MagicMock:
@@ -27,6 +32,7 @@ def mock_conversation_service() -> MagicMock:
 def client(mock_interview_service: MagicMock, mock_conversation_service: MagicMock) -> TestClient:
     app.dependency_overrides[get_interview_service] = lambda: mock_interview_service
     app.dependency_overrides[get_conversation_service] = lambda: mock_conversation_service
+    app.dependency_overrides[get_current_user] = lambda: mock_user
     with TestClient(app) as test_client:
         yield test_client
     app.dependency_overrides.clear()
@@ -52,6 +58,7 @@ def test_start_interview_success(client: TestClient, mock_interview_service: Mag
         persona_id=PersonaType.SWE,
         topics=["Python"],
         difficulty="mid",
+        user_id=mock_user_id,
     )
 
 def test_start_interview_invalid_persona(client: TestClient) -> None:
@@ -83,6 +90,7 @@ def test_send_message_success(
     mock_interview_service.process_response.assert_called_once_with(
         interview_id="session-123",
         candidate_response=payload["message"],
+        user_id=mock_user_id,
     )
     mock_conversation_service.get_interviewer_turn_count.assert_called_once_with("session-123")
 
@@ -124,4 +132,4 @@ def test_complete_interview_success(client: TestClient, mock_interview_service: 
     response = client.post("/api/v1/interviews/session-123/complete")
     assert response.status_code == 200
     assert response.json() == {"status": "completed"}
-    mock_interview_service.complete_interview.assert_called_once_with("session-123")
+    mock_interview_service.complete_interview.assert_called_once_with("session-123", user_id=mock_user_id)

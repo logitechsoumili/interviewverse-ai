@@ -193,9 +193,9 @@ async def test_complete_candidate_journey(
 # ==========================================
 
 def test_get_report_missing_session(client: TestClient) -> None:
-    """Verifies that getting a report for a nonexistent session returns 400."""
+    """Verifies that getting a report for a nonexistent session returns 404."""
     response = client.get("/api/v1/interviews/nonexistent-id/report")
-    assert response.status_code == 400
+    assert response.status_code == 404
     assert "was not found" in response.json()["detail"].lower()
 
 @pytest.mark.anyio

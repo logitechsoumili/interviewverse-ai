@@ -1,9 +1,10 @@
 import pytest
+import uuid
 from fastapi.testclient import TestClient
 from unittest.mock import MagicMock, AsyncMock
 from datetime import datetime, timezone
 from backend.app.main import app
-from backend.app.api.dependencies import get_evaluation_service
+from backend.app.api.dependencies import get_evaluation_service, get_current_user
 from backend.app.services.ai.evaluation.exceptions import (
     EvaluationNotFoundError,
     InvalidEvaluationError,
@@ -12,6 +13,10 @@ from backend.app.services.ai.evaluation.exceptions import (
 )
 from backend.app.services.ai.personas.models import PersonaType
 from backend.app.services.ai.evaluation.models import EvaluationResult, EvaluationScore, EvaluationSummary
+from app.models.user import User
+
+mock_user_id = uuid.uuid4()
+mock_user = User(id=mock_user_id, email="test@example.com", full_name="Test User")
 
 @pytest.fixture
 def mock_evaluation_service() -> MagicMock:
@@ -22,6 +27,7 @@ def mock_evaluation_service() -> MagicMock:
 @pytest.fixture
 def client(mock_evaluation_service: MagicMock) -> TestClient:
     app.dependency_overrides[get_evaluation_service] = lambda: mock_evaluation_service
+    app.dependency_overrides[get_current_user] = lambda: mock_user
     with TestClient(app) as test_client:
         yield test_client
     app.dependency_overrides.clear()
@@ -53,7 +59,7 @@ def test_evaluate_interview_success(client: TestClient, mock_evaluation_service:
     assert data["summary"]["strengths"] == ["Clean FastAPI code", "Understands asyncio"]
     assert data["persona_id"] == "swe_interviewer"
     
-    mock_evaluation_service.evaluate_interview.assert_called_once_with("session-123")
+    mock_evaluation_service.evaluate_interview.assert_called_once_with("session-123", user_id=mock_user_id)
 
 def test_evaluate_interview_not_found(client: TestClient, mock_evaluation_service: MagicMock) -> None:
     """Verifies that 404 is returned when the evaluation/interview session is not found."""
@@ -63,22 +69,22 @@ def test_evaluate_interview_not_found(client: TestClient, mock_evaluation_servic
     assert response.json()["detail"] == "Evaluation not found."
 
 def test_evaluate_interview_invalid_request(client: TestClient, mock_evaluation_service: MagicMock) -> None:
-    """Verifies that 400 is returned for invalid request states (e.g. interview not completed)."""
-    mock_evaluation_service.evaluate_interview.side_effect = InvalidEvaluationError("Interview status is not completed.")
+    """Verifies that 400 is returned for validation failures (e.g. status not completed)."""
+    mock_evaluation_service.evaluate_interview.side_effect = InvalidEvaluationError("Status must be completed.")
     response = client.post("/api/v1/interviews/session-123/evaluate")
     assert response.status_code == 400
-    assert response.json()["detail"] == "Interview status is not completed."
+    assert response.json()["detail"] == "Status must be completed."
 
 def test_evaluate_interview_parsing_failure(client: TestClient, mock_evaluation_service: MagicMock) -> None:
-    """Verifies that 500 is returned when LLM response parser fails."""
-    mock_evaluation_service.evaluate_interview.side_effect = EvaluationParsingError("Malformed JSON.")
+    """Verifies that 500 is returned for parser failures."""
+    mock_evaluation_service.evaluate_interview.side_effect = EvaluationParsingError("Malformed LLM response.")
     response = client.post("/api/v1/interviews/session-123/evaluate")
     assert response.status_code == 500
-    assert response.json()["detail"] == "Malformed JSON."
+    assert response.json()["detail"] == "Malformed LLM response."
 
 def test_evaluate_interview_general_failure(client: TestClient, mock_evaluation_service: MagicMock) -> None:
-    """Verifies that 500 is returned for other general execution failures."""
-    mock_evaluation_service.evaluate_interview.side_effect = EvaluationError("Execution failure.")
+    """Verifies that 500 is returned for general evaluation failures."""
+    mock_evaluation_service.evaluate_interview.side_effect = EvaluationError("General engine failure.")
     response = client.post("/api/v1/interviews/session-123/evaluate")
     assert response.status_code == 500
-    assert response.json()["detail"] == "Execution failure."
+    assert response.json()["detail"] == "General engine failure."
