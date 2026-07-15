@@ -54,3 +54,40 @@ async def evaluate_interview(
         evaluated_at=evaluation.evaluated_at,
         persona_id=evaluation.persona_id,
     )
+
+@router.get("/{interview_id}/evaluation", response_model=EvaluationResponseSchema)
+def get_evaluation(
+    interview_id: str,
+    service: EvaluationService = Depends(get_evaluation_service),
+    current_user: User = Depends(get_current_user),
+) -> EvaluationResponseSchema:
+    """Retrieves a persisted evaluation for a completed interview, enforcing ownership."""
+    try:
+        evaluation = service.get_evaluation(interview_id, user_id=current_user.id)
+    except EvaluationNotFoundError:
+        raise HTTPException(
+            status_code=status.HTTP_404_NOT_FOUND,
+            detail="Evaluation not found."
+        )
+    except InvalidEvaluationError as e:
+        raise HTTPException(
+            status_code=status.HTTP_400_BAD_REQUEST,
+            detail=str(e)
+        )
+
+    return EvaluationResponseSchema(
+        scores=EvaluationScoreSchema(
+            overall_score=evaluation.scores.overall_score,
+            communication_score=evaluation.scores.communication_score,
+            technical_score=evaluation.scores.technical_score,
+            confidence_score=evaluation.scores.confidence_score,
+        ),
+        summary=EvaluationSummarySchema(
+            strengths=evaluation.summary.strengths,
+            weaknesses=evaluation.summary.weaknesses,
+            recommendations=evaluation.summary.recommendations,
+            learning_roadmap=evaluation.summary.learning_roadmap,
+        ),
+        evaluated_at=evaluation.evaluated_at,
+        persona_id=evaluation.persona_id,
+    )

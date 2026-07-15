@@ -261,3 +261,12 @@ class InterviewService:
             is_final=True,
             turn_count=turn_count
         )
+
+    def get_interview(self, interview_id: str, user_id: Optional[UUID] = None) -> InterviewSession:
+        """Retrieves an existing InterviewSession by ID, enforcing user ownership."""
+        self._validate_non_empty("Interview ID", interview_id)
+        return self.repository.get_interview(interview_id, user_id=user_id)
+
+    def list_interviews(self, user_id: UUID) -> List[InterviewSession]:
+        """Lists all interview sessions for the specified user."""
+        return self.repository.list_interviews(user_id=user_id)

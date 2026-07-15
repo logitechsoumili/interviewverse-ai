@@ -1,5 +1,6 @@
 from pydantic import BaseModel, Field
 from typing import List, Optional
+from datetime import datetime
 from backend.app.services.ai.personas.models import PersonaType
 
 class StartInterviewRequest(BaseModel):
@@ -26,3 +27,31 @@ class SendMessageResponse(BaseModel):
 class CompleteInterviewResponse(BaseModel):
     """Response payload indicating success of interview completion."""
     status: str = Field("completed", description="The final status of the interview.")
+
+class InterviewListItemSchema(BaseModel):
+    """Schema representing an interview item in a list."""
+    id: str = Field(description="Unique interview session ID.")
+    status: str = Field(description="Current status of the interview.")
+    persona: str = Field(description="Persona ID string.")
+    created_at: datetime = Field(description="Creation timestamp.")
+    completed_at: Optional[datetime] = Field(None, description="Completion timestamp.")
+
+class InterviewMetadataSchema(BaseModel):
+    """Schema representing detailed interview configuration metadata."""
+    topics: List[str] = Field(description="List of topics.")
+    difficulty: str = Field(description="Difficulty level.")
+    persona_id: str = Field(description="Persona ID.")
+    created_at: datetime = Field(description="Created timestamp.")
+    completed_at: Optional[datetime] = Field(None, description="Completed timestamp.")
+
+class ConversationSummaryTurnSchema(BaseModel):
+    """Schema representing a single message turn for listing detailed interview histories."""
+    role: str = Field(description="Role of the speaker (interviewer/candidate).")
+    content: str = Field(description="Content of the message.")
+    timestamp: datetime = Field(description="Timestamp of the message.")
+
+class InterviewDetailResponse(BaseModel):
+    """Response payload returned for individual interview retrieval requests."""
+    metadata: InterviewMetadataSchema = Field(description="Interview metadata.")
+    conversation_summary: List[ConversationSummaryTurnSchema] = Field(description="Chronological message turns.")
+    status: str = Field(description="Current status of the interview.")

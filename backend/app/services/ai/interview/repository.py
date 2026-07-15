@@ -152,3 +152,30 @@ class InterviewRepository:
             if user_id and session.user_id != user_id:
                 raise InterviewNotFoundError(f"Interview session '{interview_id}' was not found.")
             del self._interviews[interview_id]
+
+    def list_interviews(self, user_id: UUID) -> list[InterviewSession]:
+        """Lists all interview sessions for a specific user."""
+        if self.db:
+            stmt = select(InterviewSessionORM).where(InterviewSessionORM.user_id == user_id)
+            db_sessions = self.db.execute(stmt).scalars().all()
+            from backend.app.services.ai.personas.models import PersonaType
+            return [
+                InterviewSession(
+                    interview_id=str(db_session.id),
+                    session_id=str(db_session.id),
+                    persona_id=PersonaType(db_session.persona_id) if hasattr(PersonaType, 'value') else db_session.persona_id,
+                    user_id=db_session.user_id,
+                    status=InterviewStatus(db_session.status),
+                    topics=db_session.topics,
+                    difficulty=db_session.difficulty,
+                    created_at=db_session.created_at,
+                    completed_at=db_session.completed_at,
+                )
+                for db_session in db_sessions
+            ]
+        else:
+            return [
+                sess
+                for sess in self._interviews.values()
+                if sess.user_id == user_id
+            ]
