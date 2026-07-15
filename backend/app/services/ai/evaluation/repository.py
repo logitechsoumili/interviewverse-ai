@@ -1,5 +1,6 @@
 import hashlib
 import uuid
+import contextvars
 from typing import Dict, Optional
 from uuid import UUID
 from sqlalchemy.orm import Session
@@ -11,6 +12,9 @@ from backend.app.services.ai.evaluation.exceptions import (
     InvalidEvaluationError,
 )
 from app.models.evaluation import Evaluation as EvaluationORM
+
+# Thread/Task-local storage for the active SQLAlchemy Session to avoid mutating singleton instances
+db_session_var: contextvars.ContextVar[Optional[Session]] = contextvars.ContextVar("evaluation_db_session", default=None)
 
 def to_uuid(id_str: str) -> UUID:
     """Helper to convert string ID to UUID, with deterministic fallback for test strings."""
@@ -28,8 +32,16 @@ class EvaluationRepository:
     """
 
     def __init__(self, db: Optional[Session] = None) -> None:
-        self.db = db
+        self._db = db
         self._evaluations: Dict[str, EvaluationResult] = {}
+
+    @property
+    def db(self) -> Optional[Session]:
+        """Resolves the database session from task-local context or instance variable fallback."""
+        context_db = db_session_var.get()
+        if context_db is not None:
+            return context_db
+        return self._db
 
     def save_evaluation(self, interview_id: str, evaluation: EvaluationResult, user_id: Optional[UUID] = None) -> EvaluationResult:
         """Stores or updates an EvaluationResult."""

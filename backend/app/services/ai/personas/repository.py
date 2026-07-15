@@ -2,12 +2,16 @@ from typing import Dict, List, Optional
 from uuid import UUID
 from sqlalchemy.orm import Session
 from sqlalchemy import select
+import contextvars
 
 from backend.app.services.ai.personas.models import Persona as PersonaSchema, PersonaType
 from backend.app.services.ai.personas.exceptions import PersonaNotFoundError, InvalidPersonaError
 from app.models.persona import Persona as PersonaORM
 
 from pydantic import ValidationError
+
+# Thread/Task-local storage for the active SQLAlchemy Session to avoid mutating singleton instances
+db_session_var: contextvars.ContextVar[Optional[Session]] = contextvars.ContextVar("persona_db_session", default=None)
 
 class PersonaRepository:
     """Hybrid repository for storing and looking up interviewer personas.
@@ -23,10 +27,18 @@ class PersonaRepository:
             db: Optional database Session.
             raw_list: Optional custom list of personas to bootstrap (mainly for in-memory testing).
         """
-        self.db = db
+        self._db = db
         self._personas: Dict[PersonaType, PersonaSchema] = {}
         if not self.db:
             self._bootstrap_personas(raw_list)
+
+    @property
+    def db(self) -> Optional[Session]:
+        """Resolves the database session from task-local context or instance variable fallback."""
+        context_db = db_session_var.get()
+        if context_db is not None:
+            return context_db
+        return self._db
 
     def _bootstrap_personas(self, raw_list: Optional[List[PersonaSchema]] = None) -> None:
         """Pre-loads the interviewer personas into memory and performs strict bootstrap validation."""
