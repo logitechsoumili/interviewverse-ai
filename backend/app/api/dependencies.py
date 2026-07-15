@@ -37,8 +37,15 @@ def get_persona_service(
     """Dependency provider that instantiates and returns a PersonaService."""
     return PersonaService(repository=repository)
 
+async def set_db_context(db: Session = Depends(get_db)) -> None:
+    """Sets the database session context variable on the main event loop thread."""
+    from backend.app.services.ai.conversation.repository import db_session_var
+    actual_db = db if db is not None and hasattr(db, "execute") else None
+    db_session_var.set(actual_db)
+
 def get_conversation_service(
     repository: ConversationRepository = Depends(get_conversation_repository),
+    _ctx: None = Depends(set_db_context),
 ) -> ConversationService:
     """Dependency provider that instantiates and returns a ConversationService."""
     return ConversationService(repository=repository)
