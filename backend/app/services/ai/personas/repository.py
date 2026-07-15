@@ -140,9 +140,9 @@ class PersonaRepository:
         id_str = id.value if isinstance(id, PersonaType) else str(id)
 
         if self.db:
-            # Query from database with user_id filter
+            # Query from database
             stmt = select(PersonaORM).where(PersonaORM.id == id_str)
-            if user_id:
+            if user_id and id_str not in [pt.value for pt in PersonaType]:
                 stmt = stmt.where(PersonaORM.user_id == user_id)
             
             db_persona = self.db.execute(stmt).scalar_one_or_none()
@@ -183,7 +183,10 @@ class PersonaRepository:
         if self.db:
             stmt = select(PersonaORM)
             if user_id:
-                stmt = stmt.where(PersonaORM.user_id == user_id)
+                stmt = stmt.where(
+                    (PersonaORM.user_id == user_id) |
+                    (PersonaORM.id.in_([pt.value for pt in PersonaType]))
+                )
             db_personas = self.db.execute(stmt).scalars().all()
             
             res = []
@@ -244,6 +247,8 @@ class PersonaRepository:
     def update_persona(self, user_id: UUID, id: str | PersonaType, schema: PersonaSchema) -> PersonaSchema:
         """Updates a persona in the database."""
         id_str = id.value if isinstance(id, PersonaType) else str(id)
+        if id_str in [pt.value for pt in PersonaType]:
+            raise InvalidPersonaError("Platform personas are read-only.")
         if not self.db:
             p_type = PersonaType(id) if not isinstance(id, PersonaType) else id
             self._personas[p_type] = schema
@@ -268,6 +273,8 @@ class PersonaRepository:
     def delete_persona(self, user_id: UUID, id: str | PersonaType) -> None:
         """Deletes a persona from the database."""
         id_str = id.value if isinstance(id, PersonaType) else str(id)
+        if id_str in [pt.value for pt in PersonaType]:
+            raise InvalidPersonaError("Platform personas are read-only.")
         if not self.db:
             p_type = PersonaType(id) if not isinstance(id, PersonaType) else id
             if p_type in self._personas:

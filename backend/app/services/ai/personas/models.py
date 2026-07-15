@@ -16,7 +16,7 @@ class PersonaPromptContext(BaseModel):
 
 class Persona(BaseModel):
     """Strongly typed Pydantic model representing an interviewer persona."""
-    id: PersonaType = Field(description="Unique identifier from PersonaType enum.")
+    id: PersonaType | str = Field(description="Unique identifier from PersonaType enum or custom string.")
     name: str = Field(min_length=1, description="Display name of the interviewer.")
     role: str = Field(min_length=1, description="Official role of the interviewer.")
     description: str = Field(min_length=1, description="High-level description of who they are.")
