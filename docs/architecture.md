@@ -1,6 +1,6 @@
 # InterviewVerse AI: System Architecture Documentation
 
-Welcome to the **InterviewVerse AI** backend architecture documentation. This document serves as a comprehensive guide for future developers, code reviewers, internship evaluators, and open-source contributors to understand the design, engineering principles, data flow, and roadmap of the InterviewVerse AI system.
+Welcome to the **InterviewVerse AI** backend architecture documentation. This document serves as a comprehensive guide for future developers, code reviewers, and contributors to understand the design, engineering principles, data flow, and roadmap of the InterviewVerse AI system.
 
 ---
 
@@ -35,14 +35,29 @@ backend/
 │   │   ├── dependencies.py     # Central FastAPI Dependency Injection provider
 │   │   ├── exceptions.py       # Global exception handler & HTTP translators
 │   │   └── main.py             # FastAPI App definition & startup configuration
+│   ├── auth/                   # Authentication & Authorization Subsystem
+│   │   ├── hashing.py          # Password hashing utilities using bcrypt
+│   │   ├── jwt.py              # JWT encoding/decoding token helpers
+│   │   └── router.py           # Registration & authentication router
 │   ├── core/                   # Core Infrastructure Config
 │   │   ├── config.py           # Settings management via Pydantic Settings & env
 │   │   └── logging.py          # Structured JSON logging configurations
-│   ├── schemas/                # Data Transfer Objects (Pydantic validation schemas)
+│   ├── db/                     # Relational Database Integration
+│   │   ├── base.py             # Declarative base class for models
+│   │   ├── database.py         # SQLAlchemy engine setup & connection pooling
+│   │   └── session.py          # Database session lifecycles (SessionLocal, get_db)
+│   ├── models/                 # Database ORM Entities (SQLAlchemy)
+│   │   ├── interview_session.py
+│   │   ├── message.py
+│   │   ├── persona.py
+│   │   ├── report.py
+│   │   └── user.py
+│   ├── schemas/                # Data Transfer DTOs (Pydantic validation schemas)
 │   │   ├── evaluations.py
 │   │   ├── interviews.py
 │   │   ├── personas.py
-│   │   └── reports.py
+│   │   ├── reports.py
+│   │   └── user.py
 │   └── services/               # Core Business Logic Layer (Engine Subsystems)
 │       └── ai/
 │           ├── conversation/   # Handles conversation turns and history
@@ -53,6 +68,11 @@ backend/
 │           ├── prompts/        # Manages prompt templates, registries, and variables
 │           ├── reports/        # Generates final markdown assessment reports
 │           └── streaming/      # Handles incremental streaming response parsing
+├── alembic/                    # Database Migrations folder
+│   ├── versions/               # Alembic version files
+│   ├── env.py                  # Alembic environment configuration
+│   └── script.py.mako          # Alembic script template
+├── alembic.ini                 # Alembic configuration
 ├── tests/                      # Automated Test Suite
 │   ├── api/                    # Endpoint / API routing tests
 │   ├── integration/            # Multi-service lifecycle workflow tests
@@ -63,9 +83,38 @@ backend/
 
 ---
 
-## 4. Service Architecture
+## 4. Core Platform Architecture
 
-The system is composed of eight specialized engines, each with distinct, single-responsibility boundaries:
+InterviewVerse AI integrates a relational database layer using SQLAlchemy ORM to manage core business entities, accompanied by Alembic for schema migrations and a JWT-based authentication system.
+
+### 1. Database & SQLAlchemy Integration
+- **Declarative Base**: The base model class is defined in [base.py](file:///d:/PROJECTS/interviewverse-ai/backend/app/db/base.py) using SQLAlchemy's `DeclarativeBase`. All database-backed entities inherit from this base class.
+- **Engine Configuration**: Configured in [database.py](file:///d:/PROJECTS/interviewverse-ai/backend/app/db/database.py), managing database connections using Pydantic settings. For SQLite, `check_same_thread` is disabled to allow async execution, and pool recycle/pre-ping options are configured for client-server databases.
+- **Session Lifecycle**: Structured in [session.py](file:///d:/PROJECTS/interviewverse-ai/backend/app/db/session.py) via a session factory `SessionLocal`. The `get_db()` generator serves as a FastAPI dependency that yields a database session and guarantees its closure in a `try/finally` block.
+
+### 2. Alembic Migrations
+- **Location**: [`backend/alembic/`](file:///d:/PROJECTS/interviewverse-ai/backend/alembic)
+- **Role**: Standardized schema migration runner. Schema version history and deployment updates are handled via Alembic version scripts. The initial database structure containing users, personas, interview sessions, messages, and reports is defined in the version script `7e169c60cd24_create_initial_tables.py`.
+
+### 3. User Model & Entities
+Database entities are defined as SQLAlchemy ORM classes in [`backend/app/models/`](file:///d:/PROJECTS/interviewverse-ai/backend/app/models):
+- **`User`**: Represents system users owning interview sessions. Declares fields `id` (UUID), `email` (indexed, unique), `full_name`, `password_hash`, `created_at`, and maps a 1-to-many relationship to `InterviewSession`.
+- **`Persona`**: Defines the details of an interviewer persona in the database schema.
+- **`InterviewSession`**: Links users and personas. Contains metadata like start/end times and holds a 1-to-many relationship with `Message` and 1-to-1 relationship with `Report`.
+- **`Message`**: Stores individual conversation turns exchanged within a session.
+- **`Report`**: Stores synthesized performance scores (overall, communication, technical, confidence) and text feedback.
+
+### 4. Authentication Subsystem
+- **Location**: [`backend/app/auth/`](file:///d:/PROJECTS/interviewverse-ai/backend/app/auth)
+- **Password Hashing**: [hashing.py](file:///d:/PROJECTS/interviewverse-ai/backend/app/auth/hashing.py) uses `passlib` with `bcrypt` algorithms to compute secure password hashes and verify candidate credentials.
+- **JWT Helpers**: [jwt.py](file:///d:/PROJECTS/interviewverse-ai/backend/app/auth/jwt.py) utilizes `python-jose` to generate signed JSON Web Tokens (JWT) containing expiration (`exp`) times. It handles token validation and signature check exceptions (`ExpiredSignatureError` and `JWTError`).
+- **Authentication Routes**: Managed in [router.py](file:///d:/PROJECTS/interviewverse-ai/backend/app/auth/router.py) with endpoints to register users (`/auth/register`), check for duplicates, and save users to the database.
+
+---
+
+## 5. AI Platform Engine Subsystems
+
+The AI features are composed of eight specialized engines with distinct responsibility boundaries:
 
 ### 1. Gemini Service
 - **Location**: [`services/ai/gemini/`](file:///d:/PROJECTS/interviewverse-ai/backend/app/services/ai/gemini)
@@ -105,80 +154,38 @@ The system is composed of eight specialized engines, each with distinct, single-
 
 ---
 
-## 5. Dependency Graph
+## 6. API Layer Architecture
 
-The following Mermaid diagram outlines the relationships and injection directions between routers, services, repositories, and external frameworks:
+The presentation layer of InterviewVerse AI implements clean routing, aggregates endpoints, dynamically handles dependencies, and translates exceptions to standardized HTTP responses.
 
-```mermaid
-graph TD
-    subgraph Presentation Layer [API Routers]
-        PR[Persona Router]
-        IR[Interview Router]
-        ER[Evaluation Router]
-        RR[Report Router]
-    end
+### 1. Versioned Routes under `/api/v1`
+All business features and authentication endpoints are nested under a versioned path schema. For example:
+- `/api/v1/auth/register` (User registration)
+- `/api/v1/personas` (List personas & details)
+- `/api/v1/interviews` (Start interview, process candidate answers, complete sessions)
+- `/api/v1/evaluations` (Retrieve evaluations)
+- `/api/v1/reports` (Retrieve generated assessment reports)
 
-    subgraph Business Logic Layer [Service Subsystems]
-        PeS[Persona Service]
-        CoS[Conversation Service]
-        InS[Interview Service]
-        EvS[Evaluation Service]
-        ReS[Report Service]
-        StS[Streaming Service]
-        GeS[Gemini Service]
-        PrB[Prompt Builder]
-    end
+### 2. Central `api_router` Aggregation
+A centralized router in [__init__.py](file:///d:/PROJECTS/interviewverse-ai/backend/app/api/__init__.py) gathers individual API sub-routers (health, auth, and AI features) and exports them under a single unified router, which the main FastAPI application factory integrates in [main.py](file:///d:/PROJECTS/interviewverse-ai/backend/app/main.py).
 
-    subgraph Data Access Layer [In-Memory Repositories]
-        PeR[Persona Repository]
-        CoR[Conversation Repository]
-        InR[Interview Repository]
-        EvR[Evaluation Repository]
-    end
+### 3. Dependency Injection Architecture
+FastAPI's declarative dependency injection framework is fully leveraged to keep routes decoupled from service implementation details:
+- **Central Provider**: Factory functions in [dependencies.py](file:///d:/PROJECTS/interviewverse-ai/backend/app/api/dependencies.py) assemble the service dependency graph dynamically.
+- **Mocking Support**: The decoupling allows swapping concrete providers with mocks during testing without changing endpoint code.
 
-    subgraph Core Configuration
-        Set[Settings Config]
-    end
-
-    subgraph External Client SDKs
-        GG[google-genai SDK Client]
-    end
-
-    PR --> PeS
-    IR --> InS
-    ER --> EvS
-    RR --> ReS
-
-    InS --> PeS
-    InS --> CoS
-    InS --> PrB
-    InS --> GeS
-    InS --> InR
-
-    EvS --> PrB
-    EvS --> GeS
-    EvS --> CoS
-    EvS --> PeS
-    EvS --> InR
-    EvS --> EvR
-
-    ReS --> InR
-    ReS --> PeS
-    ReS --> EvR
-
-    StS --> GeS
-    GeS --> GG
-    GeS --> Set
-    
-    PeS --> PeR
-    CoS --> CoR
-```
+### 4. Exception Mapping Strategy
+Domain-specific exceptions are translated into standard HTTP responses in [exceptions.py](file:///d:/PROJECTS/interviewverse-ai/backend/app/api/exceptions.py):
+- **`404 Not Found`**: Triggered when a persona, interview, or evaluation is missing.
+- **`409 Conflict`**: Raised when attempting to mutate finished sessions (e.g., `InterviewAlreadyCompletedError`).
+- **`400 Bad Request`**: Raised during validation failures or structural inconsistencies.
+- **`500 Internal Server Error`**: Catches explicit generation errors or failures in parsing AI JSON structures.
 
 ---
 
-## 6. Request Lifecycle
+## 7. Data Flow & Request Lifecycle
 
-The diagram below depicts the lifecycle of a standard API call, demonstrating the execution path from client request to final JSON serialization:
+The diagram below depicts the execution path from a client request, through the presentation, dependency injection, and business logic layers, down to external LLM calls and transient persistence.
 
 ```mermaid
 sequenceDiagram
@@ -206,9 +213,9 @@ sequenceDiagram
 
 ---
 
-## 7. Interview Lifecycle
+## 8. Interview Lifecycle State Machine
 
-An interview session progresses through specific phases to guarantee conversation consistency, non-repetitive questions, structured evaluation, and clean reports:
+The state diagram below illustrates how an interview session moves through the starting, message-exchanging, and completion/evaluation phases:
 
 ```mermaid
 stateDiagram-v2
@@ -235,40 +242,27 @@ stateDiagram-v2
 
 ---
 
-## 8. Repository Architecture
+## 9. Repository State & Migration Path
 
-Data management utilizes in-memory repositories to keep the system fast, self-contained, and decoupled from heavy database configurations. 
+Currently, data storage is split between the Core Platform and the AI Platform services:
 
-- **Singleton Pattern**: Repositories are instantiated as module-level lazy-initialized singletons. For example, in [`conversation/dependencies.py`](file:///d:/PROJECTS/interviewverse-ai/backend/app/services/ai/conversation/dependencies.py), the `get_conversation_repository()` function references a global `_conversation_repository` object. This ensures that throughout the entire application lifecycle, all requests access the same in-memory dictionaries, preserving conversation history across multiple REST API invocations.
-- **Thread Safety & Sync Operations**: Since the backend executes tasks on standard asynchronous loops, data access uses dict mutations which are thread-safe under Python's Global Interpreter Lock (GIL) for synchronous operations.
-- **Data Models**: Repositories are strictly typed, validating read/write objects via Pydantic before allowing memory mutations.
+| Component | Current State | Target Future State |
+| :--- | :--- | :--- |
+| **Core Platform** (Users, Auth records) | Relational Database (SQLAlchemy & Alembic migrations) | SQLite/PostgreSQL database storage |
+| **AI Platform** (Conversations, Sessions, Evaluations, Reports) | In-Memory Repositories (Singleton Pattern) | Relational database (SQLAlchemy models) linked via foreign keys |
 
----
+### In-Memory Singletons
+AI repositories (e.g. `PersonaRepository`, `ConversationRepository`, `InterviewRepository`, `EvaluationRepository`) are instantiated as module-level lazy-initialized singletons. For example, in [`conversation/dependencies.py`](file:///d:/PROJECTS/interviewverse-ai/backend/app/services/ai/conversation/dependencies.py), the `get_conversation_repository()` function references a global `_conversation_repository` object. This ensures that throughout the entire application lifecycle, all requests access the same in-memory dictionaries, preserving conversation history across multiple REST API invocations.
 
-## 9. Dependency Injection Architecture
+### Database-Backed Core Entities
+Database schemas for relational persistence are defined in [`app/models`](file:///d:/PROJECTS/interviewverse-ai/backend/app/models). These SQLAlchemy models define table structures matching core entities.
 
-Dependency Injection (DI) is managed declaratively using FastAPI's `Depends` system.
-
-- **Central Provider**: In [`api/dependencies.py`](file:///d:/PROJECTS/interviewverse-ai/backend/app/api/dependencies.py), factories assemble downstream dependency graphs. 
-- **Decoupled Architecture**: Routers never instantiate services directly. They request them through `Depends(get_interview_service)`. This allows test configurations to easily swap concrete components (like swapping the real `GeminiClient` with a mock equivalent during unit testing) without touching route controllers.
-- **Dynamic Configuration Injection**: Core system parameters such as `GEMINI_API_KEY`, model names, and temperatures are loaded dynamically from environment files via `pydantic-settings` and injected down to services.
-
----
-
-## 10. Error Handling Strategy
-
-InterviewVerse AI applies a tiered, domain-specific exception model translating custom business logic errors directly into standard HTTP statuses:
-
-1. **Domain Exceptions**: Each service defines its own domain-specific errors (e.g., `PersonaNotFoundError`, `InterviewAlreadyCompletedError`, `EvaluationParsingError`).
-2. **HTTP Translation**: Handlers are registered globally in [`api/exceptions.py`](file:///d:/PROJECTS/interviewverse-ai/backend/app/api/exceptions.py), catching custom domain exceptions and formatting them:
-   - **`404 Not Found`**: Triggered when a persona, interview, or evaluation is missing (e.g., `InterviewNotFoundError`).
-   - **`409 Conflict`**: Raised when attempting to mutate finished sessions (e.g., `InterviewAlreadyCompletedError`).
-   - **`400 Bad Request`**: Raised during validation failures or structural inconsistencies (e.g., `InvalidPersonaError`, `InvalidEvaluationError`).
-   - **`500 Internal Server Error`**: Catches explicit generation errors or failures in parsing AI JSON structures (e.g., `InterviewGenerationError`, `EvaluationParsingError`).
+> [!NOTE]
+> **Repository Migration Path**: The target roadmap is to migrate all AI Platform repositories (Interviews, Conversations, Evaluations, Reports) to SQLAlchemy-backed database repositories. This will map the transient in-memory state models into their corresponding relational DB models.
 
 ---
 
-## 11. Testing Strategy
+## 10. Testing Strategy
 
 The test suite enforces structural code coverage and checks reliability across three core layers:
 
@@ -279,28 +273,36 @@ The test suite enforces structural code coverage and checks reliability across t
 ### Current Test Statistics
 All unit, API, and integration tests pass successfully:
 - **Total Passing Tests**: `138 passed`
-- **Execution Time**: `~12 seconds`
+- **Execution Time**: `~11 seconds`
 - **Configuration**: Configured in `pytest.ini` with custom filters to bypass Starlette deprecation warnings.
 
 ---
 
-## 12. Future Production Roadmap
+## 11. Current Architecture Risks & Production Limitations
 
-To scale InterviewVerse AI to a multi-tenant, high-throughput production environment, the following structural enhancements are planned:
+While the backend exhibits strong decoupled design and complete test coverage, several risks must be noted before full-scale deployment:
 
-### 1. Database Persistence
-- **SQLAlchemy & PostgreSQL**: Replace the transient in-memory dictionaries with a robust relational database like PostgreSQL. Relational structures will store sessions, turns, evaluations, and reports linked by foreign keys.
-- **Alembic**: Integrate database migration tools to manage structural schema upgrades.
+1. **In-Memory AI State is Not Horizontally Scalable**
+   - The AI engines store session state, message turns, and evaluations in local process memory dictionaries. Consequently, the application cannot run in multi-instance or clustered environments (like Kubernetes replica sets or load-balanced containers) without losing session state consistency.
+2. **Missing Authentication Ownership Mapping for AI Entities**
+   - Although a JWT-based authentication system and a `User` model are implemented in the database, there is no ownership relationship currently enforced between a logged-in user and the in-memory AI sessions. Authenticating requests and restricting active interviews or evaluations to their respective users is future work.
+3. **Observability & Traceability Gaps**
+   - The platform does not propagate correlation IDs or trace contexts to down-stream requests. Monitoring long-running LLM calls, rate-limit failures, or tracking requests through the engines is restricted to local logs.
 
-### 2. Authentication & Authorization
-- **JWT & OAuth2**: Implement token-based authentication using FastAPI Security utilities.
-- **Role-Based Access Control (RBAC)**: Restrict access to administrative endpoints (such as updating persona definitions) to administrator roles, while allowing standard candidates to interact only with their own sessions.
+---
 
-### 3. Observability
-- **Structured JSON Logging**: Streamline the current logging component to dump logs directly to centralized engines (like Datadog or ELK stack).
-- **OpenTelemetry & Prometheus**: Instrument service methods with trace IDs to monitor round-trip latency to the Gemini API and collect operational metrics (e.g., rate limits, HTTP error counts, and queue depth).
+## 12. Deployment Readiness & Production Roadmap
 
-### 4. Deployment
-- **Dockerization**: Containerize the FastAPI backend via multi-stage Docker builds.
-- **Kubernetes / Cloud Run**: Orchestrate container deployments, managing scaling, health checks, and secure secrets manager bindings for AI credentials.
-- **CI/CD Pipeline**: Automate linters (`flake8`, `black`, `mypy`) and `pytest` execution on every pull request to ensure high code quality.
+The platform contains components that are production-ready alongside elements requiring structural migration before deployment:
+
+### Production-Ready Components
+- **FastAPI Core**: Fully asynchronous, versioned routing with global exception translation and DI provider wiring.
+- **SQLAlchemy & Alembic**: Database tables are schema-managed, and the migration pipeline works correctly.
+- **JWT Auth**: User creation, password hashing, token encoding and validation are fully functional.
+- **Gemini SDK Wrapper**: Handles retry loops, model configurations, and exceptions from the official `google-genai` SDK.
+
+### Roadmap to Production
+To scale the platform, the following migrations are required:
+1. **DB Migration**: Move all AI singletons (sessions, message logs, evaluations, and reports) to use the database-backed SQLAlchemy repositories.
+2. **Auth Integration**: Require JWT tokens on all `/api/v1/interviews` endpoints, using current user context to map session ownership.
+3. **OpenTelemetry Integration**: Instrument Gemini client calls to record throughput, latency, and token metrics.
