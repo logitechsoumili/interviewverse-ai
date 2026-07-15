@@ -34,11 +34,17 @@ class Settings(BaseSettings):
         alias="ACCESS_TOKEN_EXPIRE_MINUTES",
     )
 
+    # Gemini configuration fields from HEAD
+    GEMINI_API_KEY: str = Field(..., alias="GEMINI_API_KEY")
+    GEMINI_MODEL: str = Field(default="gemini-2.5-flash", alias="GEMINI_MODEL")
+    GEMINI_TEMPERATURE: float = Field(default=0.7, alias="GEMINI_TEMPERATURE")
+
     model_config = SettingsConfigDict(
         env_file=str(ENV_FILE),
         env_file_encoding="utf-8",
         case_sensitive=False,
         populate_by_name=True,
+        extra="ignore"
     )
 
 @lru_cache(maxsize=1)

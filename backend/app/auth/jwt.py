@@ -31,8 +31,8 @@ def create_access_token(
         else timedelta(minutes=settings.access_token_expire_minutes)
     )
     token_data["exp"] = expiration
-    secret_key: str = settings.secret_key  # type: ignore[attr-defined]
-    algorithm: str = settings.algorithm  # type: ignore[attr-defined]
+    secret_key: str = settings.SECRET_KEY
+    algorithm: str = settings.ALGORITHM
     return jwt.encode(token_data, secret_key, algorithm=algorithm)
 
 
@@ -50,8 +50,8 @@ def decode_access_token(token: str) -> dict[str, Any]:
         JWTError: If the token is invalid or the signature cannot be verified.
     """
     try:
-        secret_key: str = settings.secret_key  
-        algorithm: str = settings.algorithm  
+        secret_key: str = settings.SECRET_KEY
+        algorithm: str = settings.ALGORITHM
         payload = jwt.decode(
             token,
             secret_key,
