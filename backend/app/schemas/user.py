@@ -25,3 +25,11 @@ class UserResponse(BaseModel):
     created_at: datetime
 
     model_config = ConfigDict(from_attributes=True)
+
+
+class Token(BaseModel):
+    """Access token response representation."""
+
+    access_token: str
+    token_type: str = "bearer"
+

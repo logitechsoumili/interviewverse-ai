@@ -91,3 +91,52 @@ def get_report_service(
         persona_service=persona_service,
         evaluation_repository=evaluation_repository,
     )
+
+
+from typing import Annotated
+from uuid import UUID
+
+from fastapi import HTTPException, status
+from fastapi.security import OAuth2PasswordBearer
+from jose import JWTError
+from jose.exceptions import ExpiredSignatureError
+from sqlalchemy.orm import Session
+
+from app.auth.jwt import decode_access_token
+from app.db.session import get_db
+from app.models.user import User
+from app.services.user_service import get_user_by_id
+
+oauth2_scheme = OAuth2PasswordBearer(tokenUrl="/api/v1/auth/login")
+
+
+def get_current_user(
+    token: Annotated[str, Depends(oauth2_scheme)],
+    db: Annotated[Session, Depends(get_db)],
+) -> User:
+    """Validate JWT access token and retrieve the currently authenticated User."""
+    credentials_exception = HTTPException(
+        status_code=status.HTTP_401_UNAUTHORIZED,
+        detail="Could not validate credentials.",
+        headers={"WWW-Authenticate": "Bearer"},
+    )
+    try:
+        payload = decode_access_token(token)
+        user_id_str: str | None = payload.get("sub")
+        if user_id_str is None:
+            raise credentials_exception
+        user_id = UUID(user_id_str)
+    except ExpiredSignatureError as exc:
+        raise HTTPException(
+            status_code=status.HTTP_401_UNAUTHORIZED,
+            detail="Access token has expired.",
+            headers={"WWW-Authenticate": "Bearer"},
+        ) from exc
+    except (JWTError, ValueError) as exc:
+        raise credentials_exception from exc
+
+    user = get_user_by_id(db, user_id)
+    if user is None:
+        raise credentials_exception
+    return user
+

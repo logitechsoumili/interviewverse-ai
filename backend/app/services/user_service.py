@@ -2,6 +2,8 @@
 
 from __future__ import annotations
 
+from uuid import UUID
+
 from sqlalchemy import select
 from sqlalchemy.exc import IntegrityError
 from sqlalchemy.orm import Session
@@ -55,3 +57,15 @@ def create_user(db: Session, user_create: UserCreate) -> User:
 
     db.refresh(user)
     return user
+
+
+def get_user_by_email(db: Session, email: str) -> User | None:
+    """Return the user with the given email if one exists."""
+    return _get_user_by_email(db, email)
+
+
+def get_user_by_id(db: Session, user_id: UUID) -> User | None:
+    """Return the user with the given ID if one exists."""
+    statement = select(User).where(User.id == user_id)
+    return db.execute(statement).scalar_one_or_none()
+
