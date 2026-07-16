@@ -55,17 +55,19 @@ def test_start_interview_success(client: TestClient, mock_interview_service: Mag
     
     mock_interview_service.start_interview.assert_called_once_with(
         interview_id=data["interview_id"],
-        persona_id=PersonaType.SWE,
+        persona_id="swe_interviewer",
         topics=["Python"],
         difficulty="mid",
         user_id=mock_user_id,
     )
 
-def test_start_interview_invalid_persona(client: TestClient) -> None:
-    """Verifies validation failure (422) for invalid persona enum."""
-    payload = {"persona_id": "invalid_persona"}
+def test_start_interview_nonexistent_persona(client: TestClient, mock_interview_service: MagicMock) -> None:
+    """Verifies 404 error when the persona does not exist."""
+    from backend.app.services.ai.personas.exceptions import PersonaNotFoundError
+    mock_interview_service.start_interview.side_effect = PersonaNotFoundError("Persona 'invalid_persona' not found.")
+    payload = {"persona_id": "invalid_persona", "topics": ["Python"], "difficulty": "mid"}
     response = client.post("/api/v1/interviews/start", json=payload)
-    assert response.status_code == 422
+    assert response.status_code == 404
 
 def test_send_message_success(
     client: TestClient,

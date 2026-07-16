@@ -141,10 +141,10 @@ def test_service_validation_failures(service: ConversationService) -> None:
         service.create_session("   ", PersonaType.HR)
     assert "Session ID cannot be empty" in str(exc_info.value)
 
-    # Invalid persona type
+    # Empty persona ID
     with pytest.raises(InvalidConversationError) as exc_info:
-        service.create_session("session_123", "invalid_persona")  # type: ignore
-    assert "persona_id must be a valid PersonaType" in str(exc_info.value)
+        service.create_session("session_123", "  ")
+    assert "persona_id must be a non-empty string" in str(exc_info.value)
 
     service.create_session("session_123", PersonaType.HR)
 

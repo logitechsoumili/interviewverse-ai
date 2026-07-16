@@ -38,12 +38,12 @@ def client(mock_gemini_client: MagicMock) -> TestClient:
     app.dependency_overrides.clear()
 
 @pytest.fixture
-def interview_repo():
-    return get_interview_repository()
+def interview_repo(db_session):
+    return get_interview_repository(db=db_session)
 
 @pytest.fixture
-def conversation_repo():
-    return get_conversation_repository()
+def conversation_repo(db_session):
+    return get_conversation_repository(db=db_session)
 
 
 # ==========================================
@@ -126,10 +126,44 @@ async def test_full_interview_lifecycle(
 # Failure Scenarios
 # ==========================================
 
-def test_start_interview_invalid_persona(client: TestClient) -> None:
-    """Verifies that starting with an invalid persona yields 422 validation failure."""
+def test_start_interview_nonexistent_persona_failure(client: TestClient) -> None:
+    """Verifies that starting with a nonexistent persona yields 404 not found."""
     response = client.post("/api/v1/interviews/start", json={"persona_id": "invalid"})
-    assert response.status_code == 422
+    assert response.status_code == 404
+
+@pytest.mark.anyio
+async def test_start_interview_custom_persona_success(
+    client: TestClient,
+    mock_gemini_client: MagicMock,
+) -> None:
+    """Verifies successful start of an interview using a custom persona created by the user."""
+    # 1. Create a custom persona first
+    custom_persona_payload = {
+        "id": "my_custom_qa_interviewer",
+        "name": "Custom QA Interviewer",
+        "role": "QA Lead",
+        "description": "Evaluates testing capability.",
+        "interview_style": "rigorous",
+        "supported_difficulty_levels": ["mid", "senior"],
+        "focus_areas": ["Automation", "Security"],
+        "system_context": "You are a custom QA lead."
+    }
+    create_resp = client.post("/api/v1/personas", json=custom_persona_payload)
+    assert create_resp.status_code == 201
+
+    # 2. Start interview with the custom persona
+    mock_gemini_client.generate_content.return_value = "What is Selenium?"
+    payload = {
+        "persona_id": "my_custom_qa_interviewer",
+        "topics": ["Testing", "Selenium"],
+        "difficulty": "mid"
+    }
+    response = client.post("/api/v1/interviews/start", json=payload)
+    assert response.status_code == 200
+    data = response.json()
+    assert "interview_id" in data
+    assert data["question"] == "What is Selenium?"
+    assert data["question_number"] == 1
 
 def test_send_message_missing_session(client: TestClient) -> None:
     """Verifies that sending a message to a nonexistent interview returns 404."""
