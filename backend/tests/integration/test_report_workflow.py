@@ -35,16 +35,16 @@ def client(mock_gemini_client: MagicMock) -> TestClient:
     app.dependency_overrides.clear()
 
 @pytest.fixture
-def interview_repo():
-    return get_interview_repository()
+def interview_repo(db_session):
+    return get_interview_repository(db=db_session)
 
 @pytest.fixture
-def conversation_repo():
-    return get_conversation_repository()
+def conversation_repo(db_session):
+    return get_conversation_repository(db=db_session)
 
 @pytest.fixture
-def evaluation_repo():
-    return get_evaluation_repository()
+def evaluation_repo(db_session):
+    return get_evaluation_repository(db=db_session)
 
 
 # ==========================================

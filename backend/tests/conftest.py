@@ -26,6 +26,15 @@ def override_get_db():
         db.close()
 
 
+@pytest.fixture
+def db_session():
+    db = TestingSessionLocal()
+    try:
+        yield db
+    finally:
+        db.close()
+
+
 def register_global_override(dependency, override_callable):
     """Utility to register a dependency override on all instances of app in sys.modules."""
     # Register on the imported app instance
