@@ -194,7 +194,7 @@ sequenceDiagram
     participant Router as API Router
     participant DI as Dependency Injector
     participant Service as Service Component
-    participant Repos as In-Memory Repository
+    participant Repos as Database Repository
     participant LLM as Gemini API (GenAI Client)
 
     Client->>Router: HTTP POST /api/v1/interviews/start
@@ -242,23 +242,15 @@ stateDiagram-v2
 
 ---
 
-## 9. Repository State & Migration Path
+## 9. Repository State & Database Persistence
 
-Currently, data storage is split between the Core Platform and the AI Platform services:
+All core entities and AI Platform data structures are fully persisted to the relational database (PostgreSQL at production; SQLite during test runs) using SQLAlchemy models.
 
-| Component | Current State | Target Future State |
-| :--- | :--- | :--- |
-| **Core Platform** (Users, Auth records) | Relational Database (SQLAlchemy & Alembic migrations) | SQLite/PostgreSQL database storage |
-| **AI Platform** (Conversations, Sessions, Evaluations, Reports) | In-Memory Repositories (Singleton Pattern) | Relational database (SQLAlchemy models) linked via foreign keys |
+### Explicit Database Session Injection
+AI repositories (e.g., `PersonaRepository`, `ConversationRepository`, `InterviewRepository`, `EvaluationRepository`) are designed as transient, request-scoped dependencies. They bind directly to a request-specific database `Session` context manager injected through their constructors, eliminating mutable global cache or contextvar session propagation dependencies.
 
-### In-Memory Singletons
-AI repositories (e.g. `PersonaRepository`, `ConversationRepository`, `InterviewRepository`, `EvaluationRepository`) are instantiated as module-level lazy-initialized singletons. For example, in [`conversation/dependencies.py`](file:///d:/PROJECTS/interviewverse-ai/backend/app/services/ai/conversation/dependencies.py), the `get_conversation_repository()` function references a global `_conversation_repository` object. This ensures that throughout the entire application lifecycle, all requests access the same in-memory dictionaries, preserving conversation history across multiple REST API invocations.
-
-### Database-Backed Core Entities
-Database schemas for relational persistence are defined in [`app/models`](file:///d:/PROJECTS/interviewverse-ai/backend/app/models). These SQLAlchemy models define table structures matching core entities.
-
-> [!NOTE]
-> **Repository Migration Path**: The target roadmap is to migrate all AI Platform repositories (Interviews, Conversations, Evaluations, Reports) to SQLAlchemy-backed database repositories. This will map the transient in-memory state models into their corresponding relational DB models.
+### Database-Backed Core and AI Entities
+Database schemas for all persistence models are defined in [`app/models`](file:///d:/PROJECTS/interviewverse-ai/backend/app/models). These models map tables for users, custom/platform personas, interview sessions, conversation message logs, evaluations, and final reports, linking them using database-level foreign key constraints.
 
 ---
 
@@ -272,37 +264,36 @@ The test suite enforces structural code coverage and checks reliability across t
 
 ### Current Test Statistics
 All unit, API, and integration tests pass successfully:
-- **Total Passing Tests**: `138 passed`
-- **Execution Time**: `~11 seconds`
+- **Total Passing Tests**: `146 passed`
+- **Execution Time**: `~3 minutes`
 - **Configuration**: Configured in `pytest.ini` with custom filters to bypass Starlette deprecation warnings.
 
 ---
 
 ## 11. Current Architecture Risks & Production Limitations
 
-While the backend exhibits strong decoupled design and complete test coverage, several risks must be noted before full-scale deployment:
+While the backend exhibits strong decoupled design and complete test coverage, several considerations must be noted before full-scale deployment:
 
-1. **In-Memory AI State is Not Horizontally Scalable**
-   - The AI engines store session state, message turns, and evaluations in local process memory dictionaries. Consequently, the application cannot run in multi-instance or clustered environments (like Kubernetes replica sets or load-balanced containers) without losing session state consistency.
-2. **Missing Authentication Ownership Mapping for AI Entities**
-   - Although a JWT-based authentication system and a `User` model are implemented in the database, there is no ownership relationship currently enforced between a logged-in user and the in-memory AI sessions. Authenticating requests and restricting active interviews or evaluations to their respective users is future work.
-3. **Observability & Traceability Gaps**
+1. **Observability & Traceability Gaps**
    - The platform does not propagate correlation IDs or trace contexts to down-stream requests. Monitoring long-running LLM calls, rate-limit failures, or tracking requests through the engines is restricted to local logs.
+2. **Gemini API Rate Limiting**
+   - Higher volumes of concurrent candidates will encounter Gemini API rate-limits. Production setups must implement prompt-level fallback handlers or token usage pooling.
+3. **Database Connection Tuning**
+   - Transitioning all simulation engines to request-scoped DB sessions requires robust database connection pooling (such as configured via pgBouncer) under high transactional loads.
 
 ---
 
 ## 12. Deployment Readiness & Production Roadmap
 
-The platform contains components that are production-ready alongside elements requiring structural migration before deployment:
+The platform contains components that are fully production-ready alongside elements requiring observability tuning before deployment:
 
 ### Production-Ready Components
 - **FastAPI Core**: Fully asynchronous, versioned routing with global exception translation and DI provider wiring.
-- **SQLAlchemy & Alembic**: Database tables are schema-managed, and the migration pipeline works correctly.
-- **JWT Auth**: User creation, password hashing, token encoding and validation are fully functional.
+- **SQLAlchemy & Alembic**: Database tables are schema-managed, and all entities (including interviews, messages, evaluations, and reports) persist directly.
+- **JWT Auth**: User creation, password hashing, JSON-based credentials logins, and token validation are fully functional.
 - **Gemini SDK Wrapper**: Handles retry loops, model configurations, and exceptions from the official `google-genai` SDK.
 
 ### Roadmap to Production
 To scale the platform, the following migrations are required:
-1. **DB Migration**: Move all AI singletons (sessions, message logs, evaluations, and reports) to use the database-backed SQLAlchemy repositories.
-2. **Auth Integration**: Require JWT tokens on all `/api/v1/interviews` endpoints, using current user context to map session ownership.
-3. **OpenTelemetry Integration**: Instrument Gemini client calls to record throughput, latency, and token metrics.
+1. **OpenTelemetry Integration**: Instrument Gemini client calls to record throughput, latency, and token metrics.
+2. **Advanced Rate Limiting**: Enforce route-level rate limiting on the `/message` and `/start` endpoints to optimize API costs.
