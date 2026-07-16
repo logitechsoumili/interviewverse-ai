@@ -171,7 +171,7 @@ class ReportService:
                 return ReportResult(
                     report_id=str(db_report.id),
                     interview_id=str(db_report.session_id),
-                    persona_id=PersonaType(interview.persona_id),
+                    persona_id=PersonaType(interview.persona_id) if interview.persona_id in [pt.value for pt in PersonaType] else interview.persona_id,
                     generated_at=db_report.generated_at,
                     executive_summary=ReportSection(
                         title=db_report.executive_summary.get("title", "Executive Summary"),

@@ -12,7 +12,7 @@ class ReportResponseSchema(BaseModel):
     """Response payload containing generated report details."""
     report_id: str = Field(description="Unique UUID report identifier.")
     interview_id: str = Field(description="Unique interview session identifier.")
-    persona_id: PersonaType = Field(description="Persona ID of the interviewer.")
+    persona_id: PersonaType | str = Field(description="Persona ID of the interviewer.")
     generated_at: datetime = Field(description="Timestamp indicating when the report was generated.")
     executive_summary: ReportSectionSchema = Field(description="Concise narrative summary.")
     performance_overview: ReportSectionSchema = Field(description="Performance overview showing score metrics.")

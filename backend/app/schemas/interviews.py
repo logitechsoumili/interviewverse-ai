@@ -5,7 +5,7 @@ from backend.app.services.ai.personas.models import PersonaType
 
 class StartInterviewRequest(BaseModel):
     """Request payload to initiate a new interview session."""
-    persona_id: PersonaType = Field(description="Interviewer persona ID.")
+    persona_id: str = Field(description="Interviewer persona ID.")
     topics: Optional[List[str]] = Field(default_factory=lambda: ["Python"], description="Topics list.")
     difficulty: Optional[str] = Field("mid", description="Difficulty level.")
 

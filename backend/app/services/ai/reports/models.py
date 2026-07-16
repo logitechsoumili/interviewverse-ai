@@ -23,7 +23,7 @@ class ReportResult(BaseModel):
         description="Unique UUID4 report identifier."
     )
     interview_id: str = Field(description="Unique interview session identifier.")
-    persona_id: PersonaType = Field(description="Persona ID of the interviewer.")
+    persona_id: PersonaType | str = Field(description="Persona ID of the interviewer.")
     generated_at: datetime = Field(
         default_factory=lambda: datetime.now(timezone.utc),
         description="Timestamp indicating when the report was generated (timezone-aware UTC)."

@@ -22,4 +22,4 @@ class EvaluationResponseSchema(BaseModel):
     scores: EvaluationScoreSchema = Field(description="Structured score metrics.")
     summary: EvaluationSummarySchema = Field(description="Structured feedback summary.")
     evaluated_at: datetime = Field(description="Timestamp indicating when the evaluation occurred.")
-    persona_id: PersonaType = Field(description="Interviewer persona ID.")
+    persona_id: PersonaType | str = Field(description="Interviewer persona ID.")

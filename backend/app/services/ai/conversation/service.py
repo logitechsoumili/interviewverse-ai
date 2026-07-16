@@ -34,19 +34,20 @@ class ConversationService:
         if not content or not content.strip():
             raise InvalidConversationError("Message content cannot be empty or whitespace.")
 
-    def create_session(self, session_id: str, persona_id: PersonaType) -> ConversationSession:
+    def create_session(self, session_id: str, persona_id: str | PersonaType) -> ConversationSession:
         """Creates a new interview conversation session.
         
         Args:
             session_id: Unique session identifier.
-            persona_id: PersonaType enum key.
+            persona_id: Persona ID string or PersonaType enum value.
             
         Returns:
             The created ConversationSession.
         """
         self._validate_session_id(session_id)
-        if not isinstance(persona_id, PersonaType):
-            raise InvalidConversationError("persona_id must be a valid PersonaType enum value.")
+        id_str = persona_id.value if isinstance(persona_id, PersonaType) else str(persona_id)
+        if not id_str or not id_str.strip():
+            raise InvalidConversationError("persona_id must be a non-empty string or a valid PersonaType enum value.")
         return self.repository.create_session(session_id, persona_id)
 
     def append_interviewer_turn(self, session_id: str, content: str) -> None:

@@ -22,4 +22,4 @@ class EvaluationResult(BaseModel):
     scores: EvaluationScore = Field(description="Structured score metrics.")
     summary: EvaluationSummary = Field(description="Structured summary of the candidate assessment.")
     evaluated_at: datetime = Field(description="Timestamp indicating when the evaluation occurred.")
-    persona_id: PersonaType = Field(description="Persona ID of the interviewer who conducted the session.")
+    persona_id: PersonaType | str = Field(description="Persona ID of the interviewer who conducted the session.")

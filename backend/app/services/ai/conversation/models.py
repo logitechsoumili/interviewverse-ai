@@ -17,7 +17,7 @@ class ConversationTurn(BaseModel):
 class ConversationSession(BaseModel):
     """Represents an interview session state and history."""
     session_id: str = Field(min_length=1, description="Unique session identifier.")
-    persona_id: PersonaType = Field(description="Interviewer persona identifier.")
+    persona_id: PersonaType | str = Field(description="Interviewer persona identifier.")
     turns: List[ConversationTurn] = Field(default_factory=list, description="Chronological list of turns.")
     is_active: bool = Field(default=True, description="Indicates if the conversation session is active.")
     created_at: datetime = Field(default_factory=lambda: datetime.now(timezone.utc), description="Session creation timestamp.")

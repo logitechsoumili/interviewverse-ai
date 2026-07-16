@@ -20,7 +20,7 @@ class InterviewSession(BaseModel):
     """Represents a technical interview orchestration session."""
     interview_id: str = Field(min_length=1, description="Unique identifier for the interview.")
     session_id: str = Field(min_length=1, description="Conversation session identifier.")
-    persona_id: PersonaType = Field(description="The persona identifier.")
+    persona_id: PersonaType | str = Field(description="The persona identifier.")
     user_id: Optional[UUID] = Field(default=None, description="Owner user ID.")
     status: InterviewStatus = Field(default=InterviewStatus.STARTING, description="Current interview status.")
     topics: List[str] = Field(description="Focus areas/topics for this interview.")
