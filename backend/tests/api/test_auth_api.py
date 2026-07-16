@@ -81,10 +81,10 @@ def test_register_and_login_flow() -> None:
 
     # 3. Login with correct credentials -> get JWT token
     login_payload = {
-        "username": user_payload["email"],
+        "email": user_payload["email"],
         "password": user_payload["password"],
     }
-    response_login = client.post("/api/v1/auth/login", data=login_payload)
+    response_login = client.post("/api/v1/auth/login", json=login_payload)
     assert response_login.status_code == 200
     login_data = response_login.json()
     assert "access_token" in login_data
@@ -104,10 +104,10 @@ def test_register_and_login_flow() -> None:
 def test_login_invalid_credentials() -> None:
     # Attempt to login a user that doesn't exist
     login_payload = {
-        "username": "nonexistent@example.com",
+        "email": "nonexistent@example.com",
         "password": "wrongpassword",
     }
-    response = client.post("/api/v1/auth/login", data=login_payload)
+    response = client.post("/api/v1/auth/login", json=login_payload)
     assert response.status_code == 401
     assert response.json()["detail"] == "Incorrect email or password."
 
@@ -121,12 +121,24 @@ def test_login_invalid_credentials() -> None:
 
     # Login with incorrect password
     login_payload_wrong_pw = {
-        "username": user_payload["email"],
+        "email": user_payload["email"],
         "password": "wrongpassword",
     }
-    response_wrong_pw = client.post("/api/v1/auth/login", data=login_payload_wrong_pw)
+    response_wrong_pw = client.post("/api/v1/auth/login", json=login_payload_wrong_pw)
     assert response_wrong_pw.status_code == 401
     assert response_wrong_pw.json()["detail"] == "Incorrect email or password."
+
+
+def test_login_malformed_payload() -> None:
+    # 1. Missing password
+    payload_no_password = {"email": "user@example.com"}
+    response = client.post("/api/v1/auth/login", json=payload_no_password)
+    assert response.status_code == 422
+
+    # 2. Invalid email format
+    payload_bad_email = {"email": "not-an-email", "password": "password123"}
+    response = client.post("/api/v1/auth/login", json=payload_bad_email)
+    assert response.status_code == 422
 
 
 def test_protected_route_negative_scenarios() -> None:

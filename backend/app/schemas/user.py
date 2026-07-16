@@ -27,6 +27,13 @@ class UserResponse(BaseModel):
     model_config = ConfigDict(from_attributes=True)
 
 
+class UserLogin(BaseModel):
+    """Payload for authenticating a user."""
+
+    email: EmailStr
+    password: str
+
+
 class Token(BaseModel):
     """Access token response representation."""
 

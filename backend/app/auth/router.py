@@ -13,7 +13,7 @@ from fastapi.security import OAuth2PasswordRequestForm
 from app.auth.hashing import verify_password
 from app.auth.jwt import create_access_token
 from app.db.session import get_db
-from app.schemas.user import UserCreate, UserResponse, Token
+from app.schemas.user import UserCreate, UserResponse, Token, UserLogin
 from app.services.user_service import DuplicateEmailError, create_user, get_user_by_email
 
 router = APIRouter(prefix="/api/v1/auth", tags=["auth"])
@@ -45,12 +45,12 @@ def register_user(
     response_model=Token,
 )
 def login(
-    form_data: Annotated[OAuth2PasswordRequestForm, Depends()],
+    login_data: UserLogin,
     db: Annotated[Session, Depends(get_db)],
 ) -> Token:
     """Authenticate a user using standard credentials and return a JWT access token."""
-    user = get_user_by_email(db, form_data.username)
-    if user is None or not verify_password(form_data.password, user.password_hash):
+    user = get_user_by_email(db, login_data.email)
+    if user is None or not verify_password(login_data.password, user.password_hash):
         raise HTTPException(
             status_code=status.HTTP_401_UNAUTHORIZED,
             detail="Incorrect email or password.",

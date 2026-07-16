@@ -135,10 +135,10 @@ def test_interview_retrieval_flow(mock_gemini_client: MagicMock) -> None:
     assert resp.status_code == 201
 
     login_a_payload = {
-        "username": user_a_payload["email"],
+        "email": user_a_payload["email"],
         "password": user_a_payload["password"]
     }
-    resp = client.post("/api/v1/auth/login", data=login_a_payload)
+    resp = client.post("/api/v1/auth/login", json=login_a_payload)
     assert resp.status_code == 200
     token_a = resp.json()["access_token"]
     headers_a = {"Authorization": f"Bearer {token_a}"}
@@ -153,10 +153,10 @@ def test_interview_retrieval_flow(mock_gemini_client: MagicMock) -> None:
     assert resp.status_code == 201
 
     login_b_payload = {
-        "username": user_b_payload["email"],
+        "email": user_b_payload["email"],
         "password": user_b_payload["password"]
     }
-    resp = client.post("/api/v1/auth/login", data=login_b_payload)
+    resp = client.post("/api/v1/auth/login", json=login_b_payload)
     assert resp.status_code == 200
     token_b = resp.json()["access_token"]
     headers_b = {"Authorization": f"Bearer {token_b}"}
