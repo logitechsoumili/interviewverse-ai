@@ -88,7 +88,7 @@ class InterviewService:
     async def start_interview(
         self,
         interview_id: str,
-        persona_id: PersonaType,
+        persona_id: PersonaType | str,
         topics: List[str],
         difficulty: str,
         user_id: Optional[UUID] = None,
