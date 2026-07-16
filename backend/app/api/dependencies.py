@@ -31,32 +31,14 @@ from backend.app.services.ai.gemini.dependencies import get_gemini_service
 
 # Dependency Providers
 
-async def set_db_context(db: Session = Depends(get_db)) -> None:
-    """Sets the database session context variable on the main event loop thread."""
-    actual_db = db if db is not None and hasattr(db, "execute") else None
-    
-    from backend.app.services.ai.conversation.repository import db_session_var as conv_var
-    conv_var.set(actual_db)
-    
-    from backend.app.services.ai.interview.repository import db_session_var as int_var
-    int_var.set(actual_db)
-    
-    from backend.app.services.ai.evaluation.repository import db_session_var as eval_var
-    eval_var.set(actual_db)
-    
-    from backend.app.services.ai.personas.repository import db_session_var as persona_var
-    persona_var.set(actual_db)
-
 def get_persona_service(
     repository: PersonaRepository = Depends(get_persona_repository),
-    _ctx: None = Depends(set_db_context),
 ) -> PersonaService:
     """Dependency provider that instantiates and returns a PersonaService."""
     return PersonaService(repository=repository)
 
 def get_conversation_service(
     repository: ConversationRepository = Depends(get_conversation_repository),
-    _ctx: None = Depends(set_db_context),
 ) -> ConversationService:
     """Dependency provider that instantiates and returns a ConversationService."""
     return ConversationService(repository=repository)
@@ -73,7 +55,6 @@ def get_interview_service(
     prompt_builder: PromptBuilder = Depends(get_prompt_builder),
     gemini_service: GeminiService = Depends(get_gemini_service),
     repository: InterviewRepository = Depends(get_interview_repository),
-    _ctx: None = Depends(set_db_context),
 ) -> InterviewService:
     """Dependency provider that instantiates and returns an InterviewService."""
     return InterviewService(
@@ -91,7 +72,6 @@ def get_evaluation_service(
     persona_service: PersonaService = Depends(get_persona_service),
     interview_repository: InterviewRepository = Depends(get_interview_repository),
     evaluation_repository: EvaluationRepository = Depends(get_evaluation_repository),
-    _ctx: None = Depends(set_db_context),
 ) -> EvaluationService:
     """Dependency provider that instantiates and returns an EvaluationService."""
     return EvaluationService(
@@ -108,7 +88,6 @@ def get_report_service(
     persona_service: PersonaService = Depends(get_persona_service),
     evaluation_repository: EvaluationRepository = Depends(get_evaluation_repository),
     db: Session = Depends(get_db),
-    _ctx: None = Depends(set_db_context),
 ) -> ReportService:
     """Dependency provider that instantiates and returns a ReportService."""
     return ReportService(

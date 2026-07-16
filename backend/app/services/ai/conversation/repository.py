@@ -1,6 +1,5 @@
 import uuid
 import hashlib
-import contextvars
 from typing import Dict, Optional, List
 from uuid import UUID
 from sqlalchemy import select, delete
@@ -11,9 +10,6 @@ from app.models.message import Message as MessageORM
 from backend.app.services.ai.personas.models import PersonaType
 from backend.app.services.ai.conversation.models import ConversationSession, ConversationTurn, SpeakerType
 from backend.app.services.ai.conversation.exceptions import ConversationNotFoundError, InvalidConversationError
-
-# Thread/Task-local storage for the active SQLAlchemy Session to avoid mutating singleton instances
-db_session_var: contextvars.ContextVar[Optional[Session]] = contextvars.ContextVar("db_session", default=None)
 
 def to_uuid(id_str: str) -> UUID:
     """Helper to convert string ID to UUID, with deterministic fallback for test strings."""
@@ -37,10 +33,7 @@ class ConversationRepository:
 
     @property
     def db(self) -> Optional[Session]:
-        """Resolves the database session from task-local context or instance variable fallback."""
-        context_db = db_session_var.get()
-        if context_db is not None:
-            return context_db
+        """Resolves the database session from the instance variable."""
         return self._db
 
     def _is_db_active(self) -> bool:
@@ -48,7 +41,7 @@ class ConversationRepository:
         resolved_db = self.db
         return resolved_db is not None and hasattr(resolved_db, "execute")
 
-    def create_session(self, session_id: str, persona_id: PersonaType) -> ConversationSession:
+    def create_session(self, session_id: str, persona_id: PersonaType | str) -> ConversationSession:
         """Creates and stores a new ConversationSession.
         
         Raises:
