@@ -1,7 +1,7 @@
 "use client";
 
 import { Card, CardContent } from "@/components/ui/card";
-import { LoadingSkeleton } from "@/components/dashboard/loading-skeleton";
+import { LoadingSkeleton } from "@/features/dashboard/components/loading-skeleton";
 import { getApiErrorMessage } from "@/lib/api-error";
 import type { User } from "@/types/auth";
 import { cn } from "@/lib/utils";

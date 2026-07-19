@@ -1,13 +1,13 @@
 "use client";
 
 import { useQuery } from "@tanstack/react-query";
-import { fetchCurrentUser } from "@/services/auth";
+import { fetchInterviews } from "@/features/dashboard/services/interviews";
 import { queryKeys } from "@/lib/query-keys";
 
-export function useCurrentUserQuery() {
+export function useInterviewHistoryQuery() {
   return useQuery({
-    queryKey: queryKeys.currentUser,
-    queryFn: fetchCurrentUser,
+    queryKey: queryKeys.interviews,
+    queryFn: fetchInterviews,
     staleTime: 5 * 60 * 1000,
     retry: 1,
     refetchOnWindowFocus: false,

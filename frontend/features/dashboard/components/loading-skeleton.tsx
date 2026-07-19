@@ -4,7 +4,7 @@ import { Card, CardContent, CardHeader } from "@/components/ui/card";
 import { cn } from "@/lib/utils";
 
 type LoadingSkeletonProps = {
-  variant: "dashboard" | "history" | "profile";
+  variant: "dashboard" | "history" | "profile" | "stats";
   className?: string;
 };
 
@@ -26,6 +26,21 @@ export function LoadingSkeleton({ variant, className }: LoadingSkeletonProps) {
           </div>
         </CardContent>
       </Card>
+    );
+  }
+
+  if (variant === "stats") {
+    return (
+      <div className={cn("grid gap-4 md:grid-cols-3", className)}>
+        {Array.from({ length: 3 }).map((_, index) => (
+          <Card key={index} className="border-border/80 bg-surface/90">
+            <CardHeader className="space-y-3">
+              <SkeletonLine className="h-3 w-24" />
+              <SkeletonLine className="h-8 w-16" />
+            </CardHeader>
+          </Card>
+        ))}
+      </div>
     );
   }
 

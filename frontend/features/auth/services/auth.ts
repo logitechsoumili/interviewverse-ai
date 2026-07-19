@@ -13,9 +13,8 @@ export async function loginUser(payload: LoginRequest): Promise<AuthResponse> {
 
 export async function registerUser(
   payload: RegisterRequest
-): Promise<User> {
-  const { data } = await http.post<User>("/auth/register", payload);
-  return data;
+): Promise<void> {
+  await http.post("/auth/register", payload);
 }
 
 export async function fetchCurrentUser(): Promise<User> {

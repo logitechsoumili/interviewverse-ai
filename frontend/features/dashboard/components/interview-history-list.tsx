@@ -1,18 +1,14 @@
 "use client";
 
 import { motion } from "framer-motion";
-import { InterviewCard } from "@/components/dashboard/interview-card";
-import type { InterviewListItem } from "@/types/dashboard";
+import { InterviewCard } from "@/features/dashboard/components/interview-card";
+import type { InterviewListItem } from "@/features/dashboard/types";
 
-type HistoryListProps = {
+type InterviewHistoryListProps = {
   interviews: InterviewListItem[];
-  limit?: number;
 };
 
-export function HistoryList({ interviews, limit }: HistoryListProps) {
-  const visibleInterviews =
-    typeof limit === "number" ? interviews.slice(0, limit) : interviews;
-
+export function InterviewHistoryList({ interviews }: InterviewHistoryListProps) {
   return (
     <motion.div
       initial="hidden"
@@ -27,7 +23,7 @@ export function HistoryList({ interviews, limit }: HistoryListProps) {
       }}
       className="grid gap-4"
     >
-      {visibleInterviews.map((interview) => (
+      {interviews.map((interview) => (
         <InterviewCard key={interview.id} interview={interview} />
       ))}
     </motion.div>

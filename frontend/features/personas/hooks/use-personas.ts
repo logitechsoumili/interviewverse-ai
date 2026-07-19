@@ -1,13 +1,13 @@
 "use client";
 
 import { useQuery } from "@tanstack/react-query";
-import { fetchInterviews } from "@/services/interviews";
+import { fetchPersonas } from "@/features/personas/services/personas";
 import { queryKeys } from "@/lib/query-keys";
 
-export function useInterviewHistoryQuery() {
+export function usePersonasQuery() {
   return useQuery({
-    queryKey: queryKeys.interviews,
-    queryFn: fetchInterviews,
+    queryKey: queryKeys.personas.list,
+    queryFn: fetchPersonas,
     staleTime: 5 * 60 * 1000,
     retry: 1,
     refetchOnWindowFocus: false,

@@ -14,8 +14,8 @@ import {
   formatPersonaName,
   getInterviewStatusLabel,
   getInterviewStatusTone,
-} from "@/lib/dashboard";
-import type { InterviewListItem } from "@/types/dashboard";
+} from "@/features/dashboard/utils";
+import type { InterviewListItem } from "@/features/dashboard/types";
 import { cn } from "@/lib/utils";
 
 type InterviewCardProps = {

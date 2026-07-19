@@ -1,13 +1,13 @@
 "use client";
 
 import { motion } from "framer-motion";
-import { EmptyState } from "@/components/dashboard/empty-state";
-import { ErrorState } from "@/components/dashboard/error-state";
-import { HistoryList } from "@/components/dashboard/history-list";
-import { LoadingSkeleton } from "@/components/dashboard/loading-skeleton";
+import { EmptyState } from "@/features/dashboard/components/empty-state";
+import { ErrorState } from "@/features/dashboard/components/error-state";
+import { InterviewHistoryList } from "@/features/dashboard/components/interview-history-list";
+import { LoadingSkeleton } from "@/features/dashboard/components/loading-skeleton";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { getApiErrorMessage } from "@/lib/api-error";
-import { useInterviewHistoryQuery } from "@/hooks/use-interview-history";
+import { useInterviewHistoryQuery } from "@/features/dashboard/hooks/use-interview-history";
 
 export function HistoryView() {
   const interviewsQuery = useInterviewHistoryQuery();
@@ -62,7 +62,7 @@ export function HistoryView() {
           className="border-border/80 bg-surface/90"
         />
       ) : (
-        <HistoryList interviews={interviews} />
+        <InterviewHistoryList interviews={interviews} />
       )}
     </motion.div>
   );

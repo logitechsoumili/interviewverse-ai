@@ -4,10 +4,10 @@ import type { ReactNode } from "react";
 import { useState } from "react";
 import { motion } from "framer-motion";
 import { ProtectedRoute } from "@/components/auth/protected-route";
-import { Navbar } from "@/components/dashboard/navbar";
-import { Sidebar } from "@/components/dashboard/sidebar";
+import { Navbar } from "@/features/dashboard/components/navbar";
+import { Sidebar } from "@/features/dashboard/components/sidebar";
 import { useAuth } from "@/hooks/use-auth";
-import { useCurrentUserQuery } from "@/hooks/use-current-user";
+import { useCurrentUserQuery } from "@/features/auth/hooks/use-current-user";
 
 type DashboardLayoutProps = {
   children: ReactNode;

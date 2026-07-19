@@ -4,7 +4,7 @@ import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { Button } from "@/components/ui/button";
 import { Separator } from "@/components/ui/separator";
-import { UserProfileCard } from "@/components/dashboard/user-profile-card";
+import { UserProfileCard } from "@/features/dashboard/components/user-profile-card";
 import type { User } from "@/types/auth";
 import { cn } from "@/lib/utils";
 

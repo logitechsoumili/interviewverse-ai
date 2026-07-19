@@ -10,7 +10,11 @@ import {
 } from "react";
 import axios from "axios";
 import { useQueryClient } from "@tanstack/react-query";
-import { fetchCurrentUser, loginUser, registerUser } from "@/services/auth";
+import {
+  fetchCurrentUser,
+  loginUser,
+  registerUser,
+} from "@/features/auth/services/auth";
 import {
   clearAuthToken,
   dispatchAuthLogout,
@@ -28,7 +32,7 @@ import type {
 export type AuthContextValue = AuthenticationState & {
   login: (payload: LoginRequest) => Promise<User>;
   logout: () => void;
-  register: (payload: RegisterRequest) => Promise<User>;
+  register: (payload: RegisterRequest) => Promise<void>;
   refreshUser: () => Promise<User | null>;
 };
 
@@ -113,9 +117,8 @@ export function AuthProvider({ children }: AuthProviderProps) {
     [clearSession, refreshUser]
   );
 
-  const register = useCallback(async (payload: RegisterRequest): Promise<User> => {
-    const createdUser = await registerUser(payload);
-    return createdUser;
+  const register = useCallback(async (payload: RegisterRequest): Promise<void> => {
+    await registerUser(payload);
   }, []);
 
   const logout = useCallback(() => {
