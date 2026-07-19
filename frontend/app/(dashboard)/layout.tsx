@@ -1,10 +1,10 @@
 import type { ReactNode } from "react";
-import { ProtectedRoute } from "@/components/auth/protected-route";
+import { DashboardLayout as DashboardShell } from "@/components/dashboard/dashboard-layout";
 
 export default function DashboardLayout({
   children,
 }: Readonly<{
   children: ReactNode;
 }>) {
-  return <ProtectedRoute>{children}</ProtectedRoute>;
+  return <DashboardShell>{children}</DashboardShell>;
 }
