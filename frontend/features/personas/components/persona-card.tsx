@@ -1,7 +1,6 @@
 "use client";
 
 import { useState } from "react";
-import Link from "next/link";
 import { AnimatePresence, motion } from "framer-motion";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
@@ -141,8 +140,8 @@ export function PersonaCard({ persona }: PersonaCardProps) {
           <Button type="button" variant="outline" onClick={() => setIsOpen((value) => !value)}>
             {isOpen ? "Hide Details" : "View Details"}
           </Button>
-          <Button asChild>
-            <Link href="/dashboard">Use Persona</Link>
+          <Button type="button" variant="secondary" disabled>
+            Use Persona
           </Button>
         </CardFooter>
       </Card>

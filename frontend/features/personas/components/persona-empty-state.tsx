@@ -21,7 +21,7 @@ export function PersonaEmptyState({
     <Card className="border-border/80 bg-surface/90 shadow-sm">
       <CardHeader className="space-y-3">
         <div className="flex h-16 w-16 items-center justify-center rounded-3xl border border-border bg-background/40 text-2xl">
-          ✦
+          *
         </div>
         <CardTitle className="text-lg">{title}</CardTitle>
       </CardHeader>

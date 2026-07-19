@@ -80,14 +80,6 @@ const BUILTIN_PERSONA_PRESETS: Record<string, PersonaPreset> = {
 
 const BUILTIN_PERSONA_IDS = new Set(Object.keys(BUILTIN_PERSONA_PRESETS));
 
-function titleCase(value: string) {
-  return value
-    .split(/[_-]/g)
-    .filter(Boolean)
-    .map((part) => part.charAt(0).toUpperCase() + part.slice(1))
-    .join(" ");
-}
-
 function getFallbackPreset(persona: PersonaListItem): PersonaPreset {
   const shortDescription = `${persona.name} is a custom persona for ${persona.role.toLowerCase()}.`;
   return {

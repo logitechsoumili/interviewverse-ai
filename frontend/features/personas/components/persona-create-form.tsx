@@ -2,7 +2,6 @@
 
 import { useState } from "react";
 import { useRouter } from "next/navigation";
-import { useMutation } from "@tanstack/react-query";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { toast } from "sonner";
@@ -10,12 +9,12 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { PersonaFormField } from "@/features/personas/components/persona-form-field";
+import { useCreatePersonaMutation } from "@/features/personas/hooks/use-create-persona";
 import {
   personaCreateSchema,
   toPersonaCreateRequest,
   type PersonaCreateSchema,
 } from "@/features/personas/schemas/persona-schema";
-import { useCreatePersonaMutation } from "@/features/personas/hooks/use-create-persona";
 import { getApiErrorMessage } from "@/lib/api-error";
 
 export function PersonaCreateForm() {
@@ -90,11 +89,7 @@ export function PersonaCreateForm() {
           />
         </PersonaFormField>
 
-        <PersonaFormField
-          id="name"
-          label="Persona Name"
-          error={errors.name?.message}
-        >
+        <PersonaFormField id="name" label="Persona Name" error={errors.name?.message}>
           <Input
             id="name"
             autoComplete="off"
@@ -105,11 +100,7 @@ export function PersonaCreateForm() {
           />
         </PersonaFormField>
 
-        <PersonaFormField
-          id="role"
-          label="Role"
-          error={errors.role?.message}
-        >
+        <PersonaFormField id="role" label="Role" error={errors.role?.message}>
           <Input
             id="role"
             autoComplete="off"
