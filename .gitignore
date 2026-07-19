@@ -67,6 +67,7 @@ site/
 pip-wheel-metadata/
 *.manifest
 *.spec
+*.tsbuildinfo
 
 # ----------------------------------------
 # IDE and editor folders
