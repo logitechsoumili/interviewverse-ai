@@ -1,9 +1,13 @@
 import axios, { AxiosHeaders, type AxiosError } from "axios";
+import {
+  clearAuthToken,
+  getAuthToken,
+  dispatchAuthLogout,
+} from "@/lib/auth-storage";
 
 const DEFAULT_API_URL = "http://localhost:8000/api/v1";
 export const API_BASE_URL =
   process.env.NEXT_PUBLIC_API_URL?.trim() || DEFAULT_API_URL;
-export const ACCESS_TOKEN_KEY = "interviewverse_access_token";
 
 export const http = axios.create({
   baseURL: API_BASE_URL,
@@ -14,7 +18,7 @@ export const http = axios.create({
 
 http.interceptors.request.use((config) => {
   if (typeof window !== "undefined") {
-    const token = window.localStorage.getItem(ACCESS_TOKEN_KEY);
+    const token = getAuthToken();
 
     if (token) {
       const headers = AxiosHeaders.from(config.headers);
@@ -30,8 +34,8 @@ http.interceptors.response.use(
   (response) => response,
   (error: AxiosError) => {
     if (typeof window !== "undefined" && error.response?.status === 401) {
-      window.localStorage.removeItem(ACCESS_TOKEN_KEY);
-      window.dispatchEvent(new Event("auth:logout"));
+      clearAuthToken();
+      dispatchAuthLogout();
     }
 
     return Promise.reject(error);
