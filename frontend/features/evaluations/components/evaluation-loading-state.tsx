@@ -1,11 +1,20 @@
 "use client";
 
+import { motion } from "framer-motion";
 import { Card, CardContent, CardHeader } from "@/components/ui/card";
 import { Skeleton } from "@/components/ui/skeleton";
 
 export function EvaluationLoadingState() {
   return (
-    <div className="space-y-6">
+    <motion.div
+      initial={{ opacity: 0 }}
+      animate={{ opacity: 1 }}
+      transition={{ duration: 0.2, ease: "easeOut" }}
+      className="space-y-6"
+      role="status"
+      aria-live="polite"
+      aria-label="Loading evaluation"
+    >
       <Card className="border-border/80 bg-surface/90 shadow-sm">
         <CardHeader className="space-y-3">
           <Skeleton className="h-4 w-36" />
@@ -31,6 +40,6 @@ export function EvaluationLoadingState() {
           </CardContent>
         </Card>
       </div>
-    </div>
+    </motion.div>
   );
 }

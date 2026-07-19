@@ -36,7 +36,7 @@ export function PersonaFilters({
           id="role-filter"
           value={role}
           onChange={(event) => onRoleChange(event.target.value)}
-          className="flex h-11 w-full rounded-md border border-border bg-background px-3 py-2 text-sm text-foreground shadow-sm transition-colors focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring"
+          className="flex h-11 w-full rounded-md border border-border/80 bg-background/70 px-3 py-2 text-sm text-foreground shadow-sm transition-all duration-200 ease-out focus-visible:outline-none focus-visible:border-primary/60 focus-visible:bg-background focus-visible:ring-2 focus-visible:ring-ring/30 motion-reduce:transition-none"
         >
           <option value="all">All roles</option>
           {roleOptions.map((roleOption) => (

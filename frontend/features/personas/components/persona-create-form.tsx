@@ -67,7 +67,10 @@ export function PersonaCreateForm() {
   return (
     <form className="space-y-5" onSubmit={onSubmit} noValidate>
       {serverError ? (
-        <div className="rounded-xl border border-destructive/40 bg-destructive/10 px-4 py-3 text-sm text-destructive">
+        <div
+          className="rounded-xl border border-destructive/40 bg-destructive/10 px-4 py-3 text-sm text-destructive"
+          role="alert"
+        >
           {serverError}
         </div>
       ) : null}

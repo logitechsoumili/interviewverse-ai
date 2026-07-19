@@ -3,6 +3,7 @@
 import Link from "next/link";
 import { useCallback, useEffect, useState } from "react";
 import { useQueryClient } from "@tanstack/react-query";
+import { motion } from "framer-motion";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
@@ -39,24 +40,33 @@ function ListCard({
   emptyText: string;
 }) {
   return (
-    <Card className="border-border/80 bg-surface/90 shadow-sm">
-      <CardHeader className="space-y-2">
-        <CardTitle className="text-lg">{title}</CardTitle>
-      </CardHeader>
-      <CardContent>
-        {items.length > 0 ? (
-          <ul className="space-y-2 text-sm leading-6 text-muted-foreground">
-            {items.map((item) => (
-              <li key={item} className="rounded-2xl border border-border/70 bg-background/40 px-4 py-3">
-                {item}
-              </li>
-            ))}
-          </ul>
-        ) : (
-          <p className="text-sm leading-6 text-muted-foreground">{emptyText}</p>
-        )}
-      </CardContent>
-    </Card>
+    <motion.div
+      initial={{ opacity: 0, y: 10 }}
+      animate={{ opacity: 1, y: 0 }}
+      transition={{ duration: 0.22, ease: "easeOut" }}
+    >
+      <Card className="border-border/80 bg-surface/90 shadow-sm">
+        <CardHeader className="space-y-2">
+          <CardTitle className="text-lg">{title}</CardTitle>
+        </CardHeader>
+        <CardContent>
+          {items.length > 0 ? (
+            <ul className="space-y-2 text-sm leading-6 text-muted-foreground">
+              {items.map((item) => (
+                <li
+                  key={item}
+                  className="rounded-2xl border border-border/70 bg-background/40 px-4 py-3"
+                >
+                  {item}
+                </li>
+              ))}
+            </ul>
+          ) : (
+            <p className="text-sm leading-6 text-muted-foreground">{emptyText}</p>
+          )}
+        </CardContent>
+      </Card>
+    </motion.div>
   );
 }
 
@@ -171,7 +181,12 @@ export function EvaluationPage({ interviewId }: EvaluationPageProps) {
   }
 
   return (
-    <div className="space-y-6">
+    <motion.div
+      initial={{ opacity: 0, y: 12 }}
+      animate={{ opacity: 1, y: 0 }}
+      transition={{ duration: 0.22, ease: "easeOut" }}
+      className="space-y-6"
+    >
       <Card className="border-border/80 bg-gradient-to-br from-surface via-surface to-background shadow-sm">
         <CardHeader className="space-y-4">
           <p className="text-xs font-semibold uppercase tracking-[0.3em] text-secondary">
@@ -274,6 +289,6 @@ export function EvaluationPage({ interviewId }: EvaluationPageProps) {
           emptyText="No learning roadmap was returned for this evaluation."
         />
       </div>
-    </div>
+    </motion.div>
   );
 }

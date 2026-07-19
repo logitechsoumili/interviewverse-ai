@@ -1,11 +1,20 @@
 "use client";
 
+import { motion } from "framer-motion";
 import { Card, CardContent, CardHeader } from "@/components/ui/card";
 import { Skeleton } from "@/components/ui/skeleton";
 
 export function InterviewLoadingState() {
   return (
-    <div className="space-y-6">
+    <motion.div
+      initial={{ opacity: 0 }}
+      animate={{ opacity: 1 }}
+      transition={{ duration: 0.2, ease: "easeOut" }}
+      className="space-y-6"
+      role="status"
+      aria-live="polite"
+      aria-label="Loading interview"
+    >
       <Card className="border-border/80 bg-surface/90 shadow-sm">
         <CardHeader className="space-y-3">
           <Skeleton className="h-4 w-32" />
@@ -26,6 +35,6 @@ export function InterviewLoadingState() {
           <Skeleton className="h-24 w-full rounded-2xl" />
         </CardContent>
       </Card>
-    </div>
+    </motion.div>
   );
 }

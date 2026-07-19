@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useRef } from "react";
+import { motion } from "framer-motion";
 import { InterviewMessageItem } from "@/features/interviews/components/interview-message-item";
 import { TypingIndicator } from "@/features/interviews/components/typing-indicator";
 import type { InterviewMessage } from "@/features/interviews/types";
@@ -23,7 +24,16 @@ export function InterviewMessageList({
   }, [messages.length, isSending]);
 
   return (
-    <div className="flex h-full min-h-0 flex-col">
+    <motion.div
+      initial={{ opacity: 0 }}
+      animate={{ opacity: 1 }}
+      transition={{ duration: 0.2, ease: "easeOut" }}
+      className="flex h-full min-h-0 flex-col"
+      role="log"
+      aria-live="polite"
+      aria-relevant="additions text"
+      aria-atomic="false"
+    >
       <div className="flex-1 space-y-4 overflow-y-auto px-1 py-1 pr-2">
         {messages.map((message) => (
           <InterviewMessageItem key={message.id} message={message} onRetry={onRetryMessage} />
@@ -36,6 +46,6 @@ export function InterviewMessageList({
         ) : null}
         <div ref={endRef} />
       </div>
-    </div>
+    </motion.div>
   );
 }

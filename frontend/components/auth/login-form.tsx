@@ -61,7 +61,10 @@ export function LoginForm() {
   return (
     <form className="space-y-4" onSubmit={onSubmit} noValidate>
       {serverError ? (
-        <p className="rounded-md border border-destructive/40 bg-destructive/10 px-3 py-2 text-sm text-destructive">
+        <p
+          className="rounded-md border border-destructive/40 bg-destructive/10 px-3 py-2 text-sm text-destructive"
+          role="alert"
+        >
           {serverError}
         </p>
       ) : null}

@@ -23,7 +23,7 @@ export function Progress({ className, value, label, ...props }: ProgressProps) {
       {...props}
     >
       <div
-        className="h-full rounded-full bg-primary transition-all duration-300"
+        className="h-full rounded-full bg-gradient-to-r from-primary to-secondary transition-[width] duration-700 ease-out motion-reduce:transition-none"
         style={{ width: `${safeValue}%` }}
       />
     </div>

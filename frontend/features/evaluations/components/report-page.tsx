@@ -1,6 +1,7 @@
 "use client";
 
 import Link from "next/link";
+import { motion } from "framer-motion";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
@@ -31,24 +32,33 @@ function ReportListCard({
   emptyText: string;
 }) {
   return (
-    <Card className="border-border/80 bg-surface/90 shadow-sm">
-      <CardHeader className="space-y-2">
-        <CardTitle className="text-lg">{title}</CardTitle>
-      </CardHeader>
-      <CardContent>
-        {items.length > 0 ? (
-          <ul className="space-y-2 text-sm leading-6 text-muted-foreground">
-            {items.map((item) => (
-              <li key={item} className="rounded-2xl border border-border/70 bg-background/40 px-4 py-3">
-                {item}
-              </li>
-            ))}
-          </ul>
-        ) : (
-          <p className="text-sm leading-6 text-muted-foreground">{emptyText}</p>
-        )}
-      </CardContent>
-    </Card>
+    <motion.div
+      initial={{ opacity: 0, y: 10 }}
+      animate={{ opacity: 1, y: 0 }}
+      transition={{ duration: 0.22, ease: "easeOut" }}
+    >
+      <Card className="border-border/80 bg-surface/90 shadow-sm">
+        <CardHeader className="space-y-2">
+          <CardTitle className="text-lg">{title}</CardTitle>
+        </CardHeader>
+        <CardContent>
+          {items.length > 0 ? (
+            <ul className="space-y-2 text-sm leading-6 text-muted-foreground">
+              {items.map((item) => (
+                <li
+                  key={item}
+                  className="rounded-2xl border border-border/70 bg-background/40 px-4 py-3"
+                >
+                  {item}
+                </li>
+              ))}
+            </ul>
+          ) : (
+            <p className="text-sm leading-6 text-muted-foreground">{emptyText}</p>
+          )}
+        </CardContent>
+      </Card>
+    </motion.div>
   );
 }
 
@@ -60,14 +70,20 @@ function ReportSectionCard({
   content: string;
 }) {
   return (
-    <Card className="border-border/80 bg-surface/90 shadow-sm">
-      <CardHeader className="space-y-2">
-        <CardTitle className="text-lg">{title}</CardTitle>
-      </CardHeader>
-      <CardContent>
-        <p className="whitespace-pre-wrap text-sm leading-6 text-muted-foreground">{content}</p>
-      </CardContent>
-    </Card>
+    <motion.div
+      initial={{ opacity: 0, y: 10 }}
+      animate={{ opacity: 1, y: 0 }}
+      transition={{ duration: 0.22, ease: "easeOut" }}
+    >
+      <Card className="border-border/80 bg-surface/90 shadow-sm">
+        <CardHeader className="space-y-2">
+          <CardTitle className="text-lg">{title}</CardTitle>
+        </CardHeader>
+        <CardContent>
+          <p className="whitespace-pre-wrap text-sm leading-6 text-muted-foreground">{content}</p>
+        </CardContent>
+      </Card>
+    </motion.div>
   );
 }
 
@@ -100,7 +116,12 @@ export function ReportPage({ interviewId }: ReportPageProps) {
   }
 
   return (
-    <div className="space-y-6">
+    <motion.div
+      initial={{ opacity: 0, y: 12 }}
+      animate={{ opacity: 1, y: 0 }}
+      transition={{ duration: 0.22, ease: "easeOut" }}
+      className="space-y-6"
+    >
       <Card className="border-border/80 bg-gradient-to-br from-surface via-surface to-background shadow-sm">
         <CardHeader className="space-y-4">
           <p className="text-xs font-semibold uppercase tracking-[0.3em] text-secondary">
@@ -199,6 +220,6 @@ export function ReportPage({ interviewId }: ReportPageProps) {
           <Link href={`/dashboard/interview/${interviewId}/evaluation`}>Back to Evaluation</Link>
         </Button>
       </div>
-    </div>
+    </motion.div>
   );
 }

@@ -22,12 +22,18 @@ export function InterviewMessageItem({ message, onRetry }: InterviewMessageItemP
 
   return (
     <motion.article
+      layout
       initial={{ opacity: 0, y: 8 }}
       animate={{ opacity: 1, y: 0 }}
       transition={{ duration: 0.18, ease: "easeOut" }}
       className={cn("flex w-full", isAssistant ? "justify-start" : "justify-end")}
     >
-      <div className={cn("max-w-[88%] rounded-3xl border px-4 py-3 shadow-sm sm:max-w-[76%]", bubbleTone)}>
+      <div
+        className={cn(
+          "max-w-[88%] rounded-3xl border px-4 py-3 shadow-sm sm:max-w-[76%]",
+          bubbleTone
+        )}
+      >
         <div className="space-y-2">
           <p className="whitespace-pre-wrap text-sm leading-6">{message.content}</p>
           <div className="flex items-center justify-between gap-3 text-[11px] uppercase tracking-[0.22em] text-muted-foreground">
