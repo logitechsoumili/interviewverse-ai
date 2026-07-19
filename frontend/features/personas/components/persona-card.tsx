@@ -6,6 +6,7 @@ import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";
 import { Separator } from "@/components/ui/separator";
+import { StartInterviewButton } from "@/features/interviews/components/start-interview-button";
 import type { PersonaDisplayPersona } from "@/features/personas/types";
 
 type PersonaCardProps = {
@@ -140,9 +141,11 @@ export function PersonaCard({ persona }: PersonaCardProps) {
           <Button type="button" variant="outline" onClick={() => setIsOpen((value) => !value)}>
             {isOpen ? "Hide Details" : "View Details"}
           </Button>
-          <Button type="button" variant="secondary" disabled>
-            Use Persona
-          </Button>
+          <StartInterviewButton
+            personaId={persona.id}
+            personaName={persona.name}
+            personaRole={persona.role}
+          />
         </CardFooter>
       </Card>
     </motion.article>
