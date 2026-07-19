@@ -5,7 +5,7 @@ from __future__ import annotations
 import logging
 from contextlib import asynccontextmanager
 from typing import AsyncIterator
-
+from fastapi.middleware.cors import CORSMiddleware
 from fastapi import FastAPI
 
 from backend.app.api.exceptions import register_exception_handlers
@@ -44,6 +44,15 @@ def create_app() -> FastAPI:
         }
 
     # Register aggregated API router (includes health, auth, and AI features)
+    app.add_middleware(
+        CORSMiddleware,
+        allow_origins=[
+            "http://localhost:3000",
+        ],
+        allow_credentials=True,
+        allow_methods=["*"],
+        allow_headers=["*"],
+    )
     app.include_router(api_router)
 
     return app
