@@ -1,4 +1,4 @@
-import { InterviewEvaluationPlaceholder } from "@/features/interviews/components/interview-evaluation-placeholder";
+import { EvaluationPage } from "@/features/evaluations/components/evaluation-page";
 
 type InterviewEvaluationRoutePageProps = {
   params: Promise<{
@@ -10,5 +10,5 @@ export default async function InterviewEvaluationRoutePage({
   params,
 }: InterviewEvaluationRoutePageProps) {
   const { id } = await params;
-  return <InterviewEvaluationPlaceholder interviewId={id} />;
+  return <EvaluationPage interviewId={id} />;
 }
