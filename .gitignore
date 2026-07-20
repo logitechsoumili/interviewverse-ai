@@ -7,8 +7,7 @@
 *.env.*
 
 # Ensure environment templates remain tracked
-!backend/.env.example
-!frontend/.env.example
+
 
 # ----------------------------------------
 # Python cache and bytecode

@@ -48,8 +48,7 @@ export function HistoryView() {
         </CardHeader>
         <CardContent>
           <p className="max-w-2xl text-sm leading-6 text-muted-foreground">
-            Review each session card for persona, creation date, and completion
-            status. Details are intentionally placeholder-only for Phase 3.
+            Review each session card for persona, creation date, and completion status.
           </p>
         </CardContent>
       </Card>

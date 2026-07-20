@@ -21,7 +21,6 @@ const NAV_ITEMS = [
   { label: "Dashboard", href: "/dashboard", disabled: false },
   { label: "History", href: "/dashboard/history", disabled: false },
   { label: "Personas", href: "/dashboard/personas", disabled: false },
-  { label: "Settings", href: "#", disabled: true },
 ] as const;
 
 function SidebarContent({
