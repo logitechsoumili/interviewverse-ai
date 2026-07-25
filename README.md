@@ -189,58 +189,79 @@ interviewverse-ai/
 ## 🖼️ Screenshots
 
 <p align="center">
-  <table border="1">
-    <tr>
-      <td width="50%" align="center">
-        <strong>1. Landing Page</strong><br/>
-        <img src="https://placehold.co/600x400/0f172a/9333ea?text=1.+Landing+Page" alt="Landing Page" width="100%" />
-      </td>
-      <td width="50%" align="center">
-        <strong>2. User Login</strong><br/>
-        <img src="https://placehold.co/600x400/0f172a/9333ea?text=2.+User+Login" alt="Login" width="100%" />
-      </td>
-    </tr>
-    <tr>
-      <td width="50%" align="center">
-        <strong>3. Register Account</strong><br/>
-        <img src="https://placehold.co/600x400/0f172a/9333ea?text=3.+Register+Account" alt="Register" width="100%" />
-      </td>
-      <td width="50%" align="center">
-        <strong>4. Dashboard Analytics</strong><br/>
-        <img src="https://placehold.co/600x400/0f172a/9333ea?text=4.+Dashboard+Analytics" alt="Dashboard" width="100%" />
-      </td>
-    </tr>
-    <tr>
-      <td width="50%" align="center">
-        <strong>5. Personas Selector</strong><br/>
-        <img src="https://placehold.co/600x400/0f172a/9333ea?text=5.+Persona+Selector" alt="Personas" width="100%" />
-      </td>
-      <td width="50%" align="center">
-        <strong>6. Interview Screen</strong><br/>
-        <img src="https://placehold.co/600x400/0f172a/9333ea?text=6.+Active+Interview+Chat" alt="Interview Screen" width="100%" />
-      </td>
-    </tr>
-    <tr>
-      <td width="50%" align="center">
-        <strong>7. AI Evaluation Overview</strong><br/>
-        <img src="https://placehold.co/600x400/0f172a/9333ea?text=7.+AI+Evaluation+Scores" alt="Evaluation" width="100%" />
-      </td>
-      <td width="50%" align="center">
-        <strong>8. Detailed Markdown Report</strong><br/>
-        <img src="https://placehold.co/600x400/0f172a/9333ea?text=8.+Detailed+Report" alt="Report" width="100%" />
-      </td>
-    </tr>
-    <tr>
-      <td width="50%" align="center">
-        <strong>9. History Archives</strong><br/>
-        <img src="https://placehold.co/600x400/0f172a/9333ea?text=9.+History+List" alt="History" width="100%" />
-      </td>
-      <td width="50%" align="center">
-        <strong>10. User Profile Dashboard</strong><br/>
-        <img src="https://placehold.co/600x400/0f172a/9333ea?text=10.+User+Profile" alt="Profile" width="100%" />
-      </td>
-    </tr>
-  </table>
+<table>
+<tr>
+<td width="50%" align="center">
+
+<strong>1. Landing Page</strong><br>
+
+<img src="https://github.com/user-attachments/assets/ae0b89a9-11cd-4cb6-9227-4da96cdbc366" alt="Landing Page" width="100%">
+
+</td>
+
+<td width="50%" align="center">
+
+<strong>2. User Login</strong><br>
+
+<img src="https://github.com/user-attachments/assets/3788b756-343c-4f6a-bfb0-9812d7bbda28" alt="Login" width="100%">
+
+</td>
+</tr>
+
+<tr>
+<td width="50%" align="center">
+
+<strong>3. Dashboard Overview</strong><br>
+
+<img src="https://github.com/user-attachments/assets/b63d743e-fd73-46d0-83eb-bad82a4233a0" alt="Dashboard" width="100%">
+
+</td>
+
+<td width="50%" align="center">
+
+<strong>4. Persona Selector</strong><br>
+
+<img src="https://github.com/user-attachments/assets/c703225c-9fb4-407e-8e7d-d2d3d2c60e41" alt="Persona Selector" width="100%">
+
+</td>
+</tr>
+
+<tr>
+<td width="50%" align="center">
+
+<strong>5. Active Chat Session</strong><br>
+
+<img src="https://github.com/user-attachments/assets/d99d8ee4-6926-4ba8-8abb-13b9c6510efa" alt="Interview Screen" width="100%">
+
+</td>
+
+<td width="50%" align="center">
+
+<strong>6. Performance Evaluation</strong><br>
+
+<img src="https://github.com/user-attachments/assets/4c4865d9-1104-4072-897e-1d682194e1b0" alt="Evaluation" width="100%">
+
+</td>
+</tr>
+
+<tr>
+<td width="50%" align="center">
+
+<strong>7. Comprehensive Report</strong><br>
+
+<img src="https://github.com/user-attachments/assets/3f8f19a1-e29f-4946-8e5b-b96703505824" alt="Report" width="100%">
+
+</td>
+
+<td width="50%" align="center">
+
+<strong>8. Interview History</strong><br>
+
+<img src="https://github.com/user-attachments/assets/71a06713-ff61-4fd1-9706-4555dd5a4fbb" alt="History" width="100%">
+
+</td>
+</tr>
+</table>
 </p>
 
 ---
