@@ -306,6 +306,8 @@ def test_determinism_under_same_inputs(
 
     # Generate twice
     report1 = report_service.generate_report(interview_id)
+    import time
+    time.sleep(0.002)
     report2 = report_service.generate_report(interview_id)
 
     # Dynamic fields will differ, so we overwrite or ignore them to check strict determinism

@@ -20,6 +20,15 @@ from backend.app.services.ai.reports.exceptions import (
     ReportGenerationError,
     InvalidReportError,
 )
+from backend.app.services.ai.gemini.exceptions import (
+    GeminiError,
+    GeminiRateLimitError,
+    GeminiAuthenticationError,
+    GeminiGenerationError,
+)
+import logging
+
+logger = logging.getLogger(__name__)
 
 def register_exception_handlers(app: FastAPI) -> None:
     """Registers exception handlers that translate domain exceptions to HTTP responses."""
@@ -65,4 +74,39 @@ def register_exception_handlers(app: FastAPI) -> None:
         return JSONResponse(
             status_code=500,
             content={"detail": str(exc)}
+        )
+
+    # Upstream AI Exceptions
+    @app.exception_handler(GeminiAuthenticationError)
+    async def gemini_auth_handler(request: Request, exc: GeminiAuthenticationError):
+        logger.error(f"Gemini authentication error: {str(exc)}")
+        return JSONResponse(
+            status_code=500,
+            content={"detail": "Upstream AI service authentication or configuration failed. Please check backend GEMINI_API_KEY settings."}
+        )
+
+    @app.exception_handler(GeminiRateLimitError)
+    async def gemini_rate_limit_handler(request: Request, exc: GeminiRateLimitError):
+        logger.warning(f"Gemini rate limit error: {str(exc)}")
+        return JSONResponse(
+            status_code=429,
+            content={"detail": "Upstream AI service rate limit exceeded. Please try again shortly."}
+        )
+
+    @app.exception_handler(GeminiGenerationError)
+    @app.exception_handler(GeminiError)
+    async def gemini_general_handler(request: Request, exc: Exception):
+        logger.error(f"Gemini API execution error: {str(exc)}")
+        return JSONResponse(
+            status_code=502,
+            content={"detail": f"Upstream AI service failure: {str(exc)}"}
+        )
+
+    # Global Fallback for Unhandled Exceptions (prevents connection drops and missing CORS headers)
+    @app.exception_handler(Exception)
+    async def global_fallback_handler(request: Request, exc: Exception):
+        logger.exception("An unhandled exception occurred during request processing")
+        return JSONResponse(
+            status_code=500,
+            content={"detail": f"Internal server error: {str(exc)}"}
         )

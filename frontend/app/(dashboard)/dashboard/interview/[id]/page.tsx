@@ -6,6 +6,10 @@ type InterviewRoutePageProps = {
   }>;
 };
 
+export async function generateStaticParams() {
+  return [{ id: "placeholder" }];
+}
+
 export default async function InterviewRoutePage({ params }: InterviewRoutePageProps) {
   const { id } = await params;
   return <InterviewPage interviewId={id} />;

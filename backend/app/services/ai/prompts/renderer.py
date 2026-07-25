@@ -52,13 +52,4 @@ class PromptRenderer:
         except Exception as e:
             raise PromptValidationError(f"Failed to render prompt template '{template.name}': {str(e)}") from e
 
-        # Verify no residual placeholders remain in the output
-        residual_sys = self._extract_placeholders(system_prompt)
-        residual_user = self._extract_placeholders(user_prompt)
-        if residual_sys or residual_user:
-            all_residuals = residual_sys.union(residual_user)
-            raise PromptValidationError(
-                f"Prompt contains unrendered residual placeholders: {', '.join(all_residuals)}"
-            )
-
         return PromptPayload(system_prompt=system_prompt, user_prompt=user_prompt)

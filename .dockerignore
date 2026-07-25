@@ -1,0 +1,26 @@
+# Node/Frontend
+**/node_modules
+**/frontend/.next
+**/frontend/out
+**/frontend/tsconfig.tsbuildinfo
+
+# Python/Backend
+**/.venv
+**/__pycache__
+**/.pytest_cache
+**/backend/.env
+**/backend/tests
+
+# Git & Docker & Obsolete Files
+.git
+.gitignore
+.dockerignore
+docker-compose.yml
+Dockerfile
+README.md
+docs/
+backend/deploy_backend.sh
+frontend/Dockerfile
+backend/Dockerfile
+frontend/.dockerignore
+backend/.dockerignore

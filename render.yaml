@@ -1,0 +1,26 @@
+services:
+  - type: web
+    name: interviewverse-ai
+    env: docker
+    dockerfilePath: Dockerfile
+    dockerContext: .
+    plan: starter # Docker web services require a paid instance type (e.g. Starter) on Render due to RAM/CPU and build resource requirements
+    envVars:
+      - key: PORT
+        value: 8000
+      - key: DATABASE_URL
+        sync: false # Prompts user for Neon PostgreSQL connection string (starts with postgresql:// or postgres://)
+      - key: SECRET_KEY
+        generateValue: true # Generates a random secure secret key automatically
+      - key: ALGORITHM
+        value: HS256
+      - key: ACCESS_TOKEN_EXPIRE_MINUTES
+        value: "30"
+      - key: GEMINI_API_KEY
+        sync: false # Prompts user for their Gemini API Key
+      - key: GEMINI_MODEL
+        value: gemini-2.5-flash
+      - key: GEMINI_TEMPERATURE
+        value: "0.7"
+      - key: ALLOWED_ORIGINS
+        value: "*" # Set ALLOWED_ORIGINS to '*' for production API access
