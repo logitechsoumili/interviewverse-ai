@@ -1,6 +1,7 @@
 "use client";
 
 import { motion } from "framer-motion";
+import Link from "next/link";
 import { Button } from "@/components/ui/button";
 import {
   Card,
@@ -65,8 +66,10 @@ export function InterviewCard({ interview }: InterviewCardProps) {
           </div>
         </CardContent>
         <CardFooter className="justify-end">
-          <Button type="button" variant="outline" disabled>
-            View Details
+          <Button asChild variant="outline">
+            <Link href={interview.status === "completed" ? `/dashboard/interview/${interview.id}/report` : `/dashboard/interview/${interview.id}`}>
+              View Details
+            </Link>
           </Button>
         </CardFooter>
       </Card>
