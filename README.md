@@ -1,70 +1,83 @@
 <p align="center">
-  <img src="https://img.icons8.com/nolan/256/brain.png" alt="InterviewVerse AI Logo" width="120" />
+  <a href="https://github.com/logitechsoumili/interviewverse-ai">
+    <img src="https://placehold.co/1200x400/0f172a/9333ea?text=🔮+INTERVIEWVERSE+AI+BANNER" alt="InterviewVerse AI Banner" width="100%" />
+  </a>
+</p>
+
+<p align="center">
+  <img src="https://img.icons8.com/nolan/256/brain.png" alt="InterviewVerse AI Logo" width="100" />
 </p>
 
 <h1 align="center">🔮 InterviewVerse AI</h1>
 
 <p align="center">
-  <strong>Next-Generation AI Technical Interview Simulation Platform</strong>
+  <strong>An Intelligent, Multi-Persona Technical Interview Simulation Engine powered by Gemini AI.</strong>
 </p>
 
 <p align="center">
-  <img src="https://readme-typing-svg.herokuapp.com?font=Fira+Code&size=20&duration=3000&pause=1000&color=9C27B0&center=true&vCenter=true&width=500&lines=Gemini+AI+Powered+Interviews;Fully+Customizable+Personas;Instant+Performance+Roadmaps;Docker+Ready+%2B+GCP+Cloud+Deploy" alt="Typing SVG" />
+  <img src="https://readme-typing-svg.herokuapp.com?font=Fira+Code&size=22&duration=3500&pause=1000&color=A855F7&center=true&vCenter=true&width=600&lines=Evaluate+Candidate+Core+Strengths;Seeded+Multi-Persona+Simulation+Interviews;Detailed+Performance+Learning+Roadmaps;Production-Ready+Docker+%2B+GCP+Blueprints" alt="Typing SVG" />
 </p>
 
 <p align="center">
   <a href="https://github.com/logitechsoumili/interviewverse-ai/stargazers">
-    <img src="https://img.shields.io/github/stars/logitechsoumili/interviewverse-ai?style=for-the-badge&color=blue&logo=github" alt="GitHub Stars" />
+    <img src="https://img.shields.io/github/stars/logitechsoumili/interviewverse-ai?style=for-the-badge&color=8A2BE2&logo=github" alt="GitHub Stars" />
   </a>
   <a href="https://github.com/logitechsoumili/interviewverse-ai/network/members">
-    <img src="https://img.shields.io/github/forks/logitechsoumili/interviewverse-ai?style=for-the-badge&color=purple&logo=git" alt="GitHub Forks" />
+    <img src="https://img.shields.io/github/forks/logitechsoumili/interviewverse-ai?style=for-the-badge&color=4169E1&logo=git" alt="GitHub Forks" />
   </a>
   <a href="https://github.com/logitechsoumili/interviewverse-ai/blob/main/LICENSE">
-    <img src="https://img.shields.io/github/license/logitechsoumili/interviewverse-ai?style=for-the-badge&color=green" alt="MIT License" />
+    <img src="https://img.shields.io/github/license/logitechsoumili/interviewverse-ai?style=for-the-badge&color=2E8B57" alt="MIT License" />
   </a>
-  <img src="https://komarev.com/ghpvc/?username=logitechsoumili-interviewverse-ai&color=purple&style=for-the-badge" alt="Visitor Counter" />
+  <img src="https://komarev.com/ghpvc/?username=logitechsoumili-interviewverse-ai&color=mediumvioletred&style=for-the-badge" alt="Visitor Counter" />
 </p>
 
-<p align="center">
-  <img src="https://img.shields.io/badge/FASTAPI-009688?style=for-the-badge&logo=fastapi&logoColor=white" alt="FastAPI Badge" />
-  <img src="https://img.shields.io/badge/NEXT.JS-000000?style=for-the-badge&logo=nextdotjs&logoColor=white" alt="Next.js Badge" />
-  <img src="https://img.shields.io/badge/TAILWIND_CSS-38B2AC?style=for-the-badge&logo=tailwindcss&logoColor=white" alt="Tailwind Badge" />
-  <img src="https://img.shields.io/badge/POSTGRESQL-316192?style=for-the-badge&logo=postgresql&logoColor=white" alt="PostgreSQL Badge" />
-  <img src="https://img.shields.io/badge/DOCKER-2496ED?style=for-the-badge&logo=docker&logoColor=white" alt="Docker Badge" />
-  <img src="https://img.shields.io/badge/GOOGLE_CLOUD-4285F4?style=for-the-badge&logo=googlecloud&logoColor=white" alt="GCP Badge" />
-</p>
+---
+
+## 📌 Table of Contents
+
+- [📖 About](#-about)
+- [⚡ Features](#-features)
+- [📐 Architecture](#-architecture)
+- [🛠️ Tech Stack](#-tech-stack)
+- [📂 Folder Structure](#-folder-structure)
+- [🖼️ Screenshots](#-screenshots)
+- [🚀 Installation](#-installation)
+- [🚢 Google Cloud Deployment](#-google-cloud-deployment)
+- [🧬 API Endpoints](#-api-endpoints)
+- [⚙️ Environment Variables](#-environment-variables)
+- [🌀 Workflow](#-workflow)
+- [🔮 Future Improvements](#-future-improvements)
+- [👥 Contributors](#-contributors)
+- [📄 License](#-license)
+- [💖 Acknowledgements](#-acknowledgements)
 
 ---
 
 ## 📖 About
 
-**InterviewVerse AI** is a state-of-the-art technical interview simulation platform that prepares software engineering candidates for rigorous real-world technical assessments. Driven by Google's Gemini Large Language Model (LLM), the platform replicates the behavior of distinct tech interview personas—ranging from supportive, behavior-driven HR managers to conceptually demanding Computer Science professors and strategic tech investors. 
+**InterviewVerse AI** is a professional, production-grade technical interview simulation platform designed to prepare engineers for high-stakes technical assessments. The platform uses Google's Gemini Large Language Model (LLM) to power realistic mock interviews led by distinct, custom-designed personas. 
 
-By analyzing the candidate's real-time transcript responses, the engine persists the session, completes full evaluation assessments, and builds a comprehensive learning roadmap to bridge core knowledge gaps.
+Every session is persisted in a database, allowing users to pause, resume, and review their history. Upon completing a session, the simulation engine generates granular scores (Communication, Technical, Confidence), highlights specific strengths/weaknesses, and maps out a personalized learning roadmap.
 
 ---
 
 ## ⚡ Features
 
-### 🎙️ AI Technical Mock Interviews
-* 🤖 **Gemini AI Engine**: Simulates deep, contextual back-and-forth communication based on candidate inputs.
-* 👥 **Diverse Interviewer Personas**: Choose from different built-in interviewers with unique personalities and evaluation criteria.
-* 📄 **Resume Upload Integration**: Personalize conversation directions and question complexities using parsed resume highlights.
-
-### 🛡️ Authentication & Session Management
-* 🔑 **Secure Authentication**: Built on secure user accounts using **JWT (JSON Web Tokens)**.
-* 🔒 **Encrypted Storage**: Secure password hashing with high-performance cryptographic defaults.
-* 📂 **Interview History Retention**: Interview sessions, evaluations, and markdown reports are fully persisted in a cloud database.
-
-### 📈 Detailed Evaluation & Feedback
-* 🎯 **Fine-Grained Scoring Metrics**: Evaluates Communication, Technical Proficiency, and Confidence level out of 100.
-* 🗺️ **Personalized Roadmaps**: Generates custom learning plans to strengthen areas for improvement.
-* 📝 **Markdown Reports**: Complete downloadable and printable performance summary.
-
-### 🌐 Scalable Architecture
-* 📦 **Containerized Workloads**: Multi-stage root level `Dockerfile` configuring rootless processes.
-* 🏗️ **Single Container Serving**: Next.js static asset exports served instantly under a FastAPI SPA router.
-* ⚡ **GCP & Render Deployment Ready**: Simple, cloud-agnostic blueprints.
+- [x] 🎙️ **AI Mock Interviews**: Adaptive, real-time conversation flows driven by state-of-the-art Gemini LLM.
+- [x] 👥 **Multiple Interview Personas**: Experience diverse interview styles (e.g., HR representative, CS Professor, Tech Investor).
+- [x] 📄 **Resume-Based Interviews**: Custom interview adjustments driven by parsed candidate resume highlights.
+- [x] 💬 **Real-time Conversation**: Seamless message streaming and instant AI follow-ups.
+- [x] 🧠 **Gemini AI**: Deep context retention and multi-turn prompt engineering.
+- [x] 🔑 **JWT Authentication**: Secure user registration, sign-in, and state mapping.
+- [x] 🔒 **Secure Login**: Session tokens verified under industry-standard cryptographic algorithms.
+- [x] 💾 **PostgreSQL Database**: Persistent data storage for user accounts, persona metadata, and histories.
+- [x] 📂 **Interview History**: Chronological storage of user interview lists, complete with resume features.
+- [x] 📊 **AI Evaluation**: Automatic scoring of technical and behavioral answers.
+- [x] 📝 **Detailed Reports**: Highly readable, downloadable performance summaries.
+- [x] 📈 **Dashboard Analytics**: High-level telemetry of overall scores and completed milestones.
+- [x] 📱 **Responsive UI**: Fully optimized layout for desktop, tablet, and mobile browsers.
+- [x] 🐳 **Docker Deployment**: Clean, multi-stage production container setups.
+- [x] ☁️ **Google Cloud Platform Deployment**: Standard templates for GCP Run & Cloud SQL integration.
 
 ---
 
@@ -111,18 +124,34 @@ graph TD
 
 ## 🛠️ Tech Stack
 
-<p align="center">
-  <a href="https://skillicons.dev">
-    <img src="https://skillicons.dev/icons?i=typescript,react,nextjs,tailwindcss,python,fastapi,postgres,docker,gcp" alt="Skill Icons" />
-  </a>
+### 💻 Frontend
+<p align="left">
+  <img src="https://img.shields.io/badge/Next.js-000000?style=for-the-badge&logo=nextdotjs&logoColor=white" />
+  <img src="https://img.shields.io/badge/React-20232A?style=for-the-badge&logo=react&logoColor=61DAFB" />
+  <img src="https://img.shields.io/badge/TypeScript-007ACC?style=for-the-badge&logo=typescript&logoColor=white" />
+  <img src="https://img.shields.io/badge/Tailwind_CSS-38B2AC?style=for-the-badge&logo=tailwindcss&logoColor=white" />
 </p>
 
-* **Frontend**: Next.js (App Router, Static Export), TailwindCSS, Framer Motion, React Query, Zod.
-* **Backend**: FastAPI, SQLAlchemy, Alembic, Uvicorn, Python 3.12.
-* **Database**: PostgreSQL (Neon serverless or Google Cloud SQL).
-* **AI/LLM**: Google GenAI SDK (Gemini Models).
-* **Containerization**: Docker (Multi-stage builds, non-root configurations).
-* **Deployment**: Google Cloud Platform (Cloud Run, Cloud SQL) or Render.
+### ⚙️ Backend
+<p align="left">
+  <img src="https://img.shields.io/badge/FastAPI-009688?style=for-the-badge&logo=fastapi&logoColor=white" />
+  <img src="https://img.shields.io/badge/Python-3776AB?style=for-the-badge&logo=python&logoColor=white" />
+  <img src="https://img.shields.io/badge/SQLAlchemy-D71F26?style=for-the-badge&logo=sqlalchemy&logoColor=white" />
+  <img src="https://img.shields.io/badge/Alembic-000000?style=for-the-badge&logo=alembic&logoColor=white" />
+</p>
+
+### 💾 Database & AI
+<p align="left">
+  <img src="https://img.shields.io/badge/PostgreSQL-316192?style=for-the-badge&logo=postgresql&logoColor=white" />
+  <img src="https://img.shields.io/badge/Google_Gemini-4285F4?style=for-the-badge&logo=google&logoColor=white" />
+</p>
+
+### 🐳 Deployment & Containerization
+<p align="left">
+  <img src="https://img.shields.io/badge/Docker-2496ED?style=for-the-badge&logo=docker&logoColor=white" />
+  <img src="https://img.shields.io/badge/Google_Cloud-4285F4?style=for-the-badge&logo=googlecloud&logoColor=white" />
+  <img src="https://img.shields.io/badge/Render-46E3B7?style=for-the-badge&logo=render&logoColor=white" />
+</p>
 
 ---
 
@@ -164,41 +193,51 @@ interviewverse-ai/
     <tr>
       <td width="50%" align="center">
         <strong>1. Landing Page</strong><br/>
-        <img src="https://placehold.co/600x400/1e1e24/a3a3c2?text=Landing+Page+Mockup" alt="Landing Page" width="100%" />
+        <img src="https://placehold.co/600x400/0f172a/9333ea?text=1.+Landing+Page" alt="Landing Page" width="100%" />
       </td>
       <td width="50%" align="center">
         <strong>2. User Login</strong><br/>
-        <img src="https://placehold.co/600x400/1e1e24/a3a3c2?text=Login+Page+Mockup" alt="Login" width="100%" />
+        <img src="https://placehold.co/600x400/0f172a/9333ea?text=2.+User+Login" alt="Login" width="100%" />
       </td>
     </tr>
     <tr>
       <td width="50%" align="center">
-        <strong>3. Dashboard Overview</strong><br/>
-        <img src="https://placehold.co/600x400/1e1e24/a3a3c2?text=Dashboard+Overview+Mockup" alt="Dashboard" width="100%" />
+        <strong>3. Register Account</strong><br/>
+        <img src="https://placehold.co/600x400/0f172a/9333ea?text=3.+Register+Account" alt="Register" width="100%" />
       </td>
       <td width="50%" align="center">
-        <strong>4. Persona Selector</strong><br/>
-        <img src="https://placehold.co/600x400/1e1e24/a3a3c2?text=Persona+Selection+Mockup" alt="Personas" width="100%" />
-      </td>
-    </tr>
-    <tr>
-      <td width="50%" align="center">
-        <strong>5. Active Chat Session</strong><br/>
-        <img src="https://placehold.co/600x400/1e1e24/a3a3c2?text=Interview+Chat+Mockup" alt="Interview Screen" width="100%" />
-      </td>
-      <td width="50%" align="center">
-        <strong>6. Performance Evaluation</strong><br/>
-        <img src="https://placehold.co/600x400/1e1e24/a3a3c2?text=Evaluation+Scores+Mockup" alt="Evaluation" width="100%" />
+        <strong>4. Dashboard Analytics</strong><br/>
+        <img src="https://placehold.co/600x400/0f172a/9333ea?text=4.+Dashboard+Analytics" alt="Dashboard" width="100%" />
       </td>
     </tr>
     <tr>
       <td width="50%" align="center">
-        <strong>7. Comprehensive Report</strong><br/>
-        <img src="https://placehold.co/600x400/1e1e24/a3a3c2?text=Markdown+Report+Mockup" alt="Report" width="100%" />
+        <strong>5. Personas Selector</strong><br/>
+        <img src="https://placehold.co/600x400/0f172a/9333ea?text=5.+Persona+Selector" alt="Personas" width="100%" />
       </td>
       <td width="50%" align="center">
-        <strong>8. Interview History</strong><br/>
-        <img src="https://placehold.co/600x400/1e1e24/a3a3c2?text=History+List+Mockup" alt="History" width="100%" />
+        <strong>6. Interview Screen</strong><br/>
+        <img src="https://placehold.co/600x400/0f172a/9333ea?text=6.+Active+Interview+Chat" alt="Interview Screen" width="100%" />
+      </td>
+    </tr>
+    <tr>
+      <td width="50%" align="center">
+        <strong>7. AI Evaluation Overview</strong><br/>
+        <img src="https://placehold.co/600x400/0f172a/9333ea?text=7.+AI+Evaluation+Scores" alt="Evaluation" width="100%" />
+      </td>
+      <td width="50%" align="center">
+        <strong>8. Detailed Markdown Report</strong><br/>
+        <img src="https://placehold.co/600x400/0f172a/9333ea?text=8.+Detailed+Report" alt="Report" width="100%" />
+      </td>
+    </tr>
+    <tr>
+      <td width="50%" align="center">
+        <strong>9. History Archives</strong><br/>
+        <img src="https://placehold.co/600x400/0f172a/9333ea?text=9.+History+List" alt="History" width="100%" />
+      </td>
+      <td width="50%" align="center">
+        <strong>10. User Profile Dashboard</strong><br/>
+        <img src="https://placehold.co/600x400/0f172a/9333ea?text=10.+User+Profile" alt="Profile" width="100%" />
       </td>
     </tr>
   </table>
@@ -206,72 +245,54 @@ interviewverse-ai/
 
 ---
 
-## ⚙️ Environment Variables
-
-Copy `backend/.env.example` to `backend/.env` (and similarly for frontend if customized):
-
-| Variable Name | Description | Default / Example Value |
-| :--- | :--- | :--- |
-| `DATABASE_URL` | Neon/PostgreSQL Connection String | `postgresql+psycopg://user:pass@host/dbname` |
-| `GEMINI_API_KEY` | Google Gemini API Access Token | `AIzaSyD-your-api-key-here` |
-| `JWT_SECRET` | Secret key to sign tokens (Access + Refresh) | `your-cryptographic-secure-secret-key` |
-| `JWT_ALGORITHM` | Algorithm to encrypt token payloads | `HS256` |
-| `ACCESS_TOKEN_EXPIRE_MINUTES` | Authentication token validity duration | `60` |
-| `NEXT_PUBLIC_API_URL` | Frontend endpoint mapper (defaults to proxy) | `/api/v1` |
-
----
-
 ## 🚀 Installation & Local Development
 
-### 1. Prerequisite Checklist
-* Install [Python 3.12+](https://www.python.org/downloads/)
-* Install [Node.js v20+](https://nodejs.org/)
-* Install [Docker](https://www.docker.com/) (Optional, for container setup)
+### 1. Prerequisites
+* Install Python 3.12+
+* Install Node.js v20+
+* Install Docker Desktop (Optional)
 
-### 2. Manual Environment Setup
-
-#### Setup Backend:
+### 2. Backend Setup
+Activate a virtual environment and load required dependencies:
 ```bash
 cd backend
 python -m venv venv
-# Windows powershell:
+
+# Windows PowerShell:
 .\venv\Scripts\Activate.ps1
 # Mac/Linux:
 source venv/bin/activate
 
 pip install -r requirements.txt
-cp .env.example .env # Configure variables in .env
+cp .env.example .env
 ```
 
-#### Setup Frontend:
+### 3. Frontend Setup
+Install npm packages:
 ```bash
 cd ../frontend
 npm install
 ```
 
-### 3. Run Applications Locally
-
-#### Running Migrations & Seeding:
+### 4. Running the Application
 ```bash
-# Run inside backend activation environment
+# Run database migrations and seed default personas
+cd ../backend
 alembic upgrade head
 python app/db/seed.py
-```
 
-#### Launching servers:
-```bash
-# Start backend (Uvicorn listens on port 8000)
-cd backend
+# Boot FastAPI server (Listens on port 8000)
 uvicorn app.main:app --reload
 
-# Start frontend (Vite dev server listens on port 3000)
+# In a separate terminal, launch Next.js client
 cd ../frontend
 npm run dev
 ```
 
-### 4. Running with Docker Compose
-If you prefer running fully containerized development stacks locally, launch via Compose:
+### 5. Running with Docker
+To run the entire ecosystem locally inside a single production container layout:
 ```bash
+# Start Docker compose
 docker-compose up --build
 ```
 
@@ -279,23 +300,21 @@ docker-compose up --build
 
 ## 🚢 Google Cloud Deployment (GCP Cloud Run)
 
-Follow this recipe to deploy the single container to Cloud Run connected to Cloud SQL:
-
-### 1. Build and push container to Artifact Registry
+### 1. Build and push the image to Google Artifact Registry
 ```bash
 # Authenticate Google Cloud CLI
 gcloud auth login
 gcloud config set project [PROJECT_ID]
 
-# Create Artifact Registry Repository
+# Create Artifact Registry Docker Repository
 gcloud artifacts repositories create interviewverse-repo \
     --repository-format=docker \
     --location=us-central1
 
-# Build and Tag local container
+# Build and Tag production container
 docker build -t us-central1-docker.pkg.dev/[PROJECT_ID]/interviewverse-repo/app:latest .
 
-# Configure Docker credentials helper
+# Configure Docker permissions helper
 gcloud auth configure-docker us-central1-docker.pkg.dev
 
 # Push to Artifact Registry
@@ -317,50 +336,65 @@ gcloud run deploy interviewverse-service \
 ## 🧬 API Endpoints
 
 <details>
-<summary>🔑 Authentication Endpoints</summary>
+<summary>🔑 Authentication</summary>
 
-| Verb | Path | Auth Required | Description |
+| Method | Path | Authentication Required | Description |
 | :--- | :--- | :--- | :--- |
-| `POST` | `/api/v1/auth/register` | No | Registers a new user. Returns user metadata. |
-| `POST` | `/api/v1/auth/login` | No | Authenticates user credentials. Returns JWT. |
+| `POST` | `/api/v1/auth/register` | No | Registers a new candidate account. |
+| `POST` | `/api/v1/auth/login` | No | Verifies credentials and returns access JWT. |
 </details>
 
 <details>
-<summary>👥 Persona Endpoints</summary>
+<summary>👥 Personas</summary>
 
-| Verb | Path | Auth Required | Description |
+| Method | Path | Authentication Required | Description |
 | :--- | :--- | :--- | :--- |
-| `GET` | `/api/v1/personas` | Yes | Retrieves list of available built-in interview personas. |
-| `POST` | `/api/v1/personas` | Yes | Creates a custom user interviewer persona. |
+| `GET` | `/api/v1/personas` | Yes | Lists available interviewer personas. |
+| `POST` | `/api/v1/personas` | Yes | Creates a custom, user-defined persona. |
 </details>
 
 <details>
-<summary>🎙️ Interview Endpoints</summary>
+<summary>🎙️ Interviews</summary>
 
-| Verb | Path | Auth Required | Description |
+| Method | Path | Authentication Required | Description |
 | :--- | :--- | :--- | :--- |
-| `POST` | `/api/v1/interviews/start` | Yes | Initiates session, records details, yields opening turn. |
-| `POST` | `/api/v1/interviews/{id}/message` | Yes | Appends candidate message, fetches dynamic follow-up. |
-| `POST` | `/api/v1/interviews/{id}/complete` | Yes | Flags session as completed and closes transactions. |
-| `GET` | `/api/v1/interviews` | Yes | Lists all past and active interviews for logged user. |
+| `POST` | `/api/v1/interviews/start` | Yes | Initiates a session and yields the opening question. |
+| `POST` | `/api/v1/interviews/{id}/message` | Yes | Appends candidate answer and returns AI follow-up. |
+| `POST` | `/api/v1/interviews/{id}/complete` | Yes | Completes session and locks further messages. |
+| `GET` | `/api/v1/interviews` | Yes | Lists all past interview sessions for the logged user. |
 | `GET` | `/api/v1/interviews/{id}` | Yes | Fetches metadata and message turns for the session ID. |
 </details>
 
 <details>
-<summary>📊 Evaluations & Reports Endpoints</summary>
+<summary>📊 Evaluations & Reports</summary>
 
-| Verb | Path | Auth Required | Description |
+| Method | Path | Authentication Required | Description |
 | :--- | :--- | :--- | :--- |
-| `POST` | `/api/v1/interviews/{id}/evaluate` | Yes | Computes scores and roadmap. Persists to DB. |
-| `GET` | `/api/v1/interviews/{id}/evaluation` | Yes | Fetches persisted evaluation metrics. |
-| `GET` | `/api/v1/interviews/{id}/report` | Yes | Generates and compiles printable performance report. |
+| `POST` | `/api/v1/interviews/{id}/evaluate` | Yes | Calculates feedback scores. Persists to database. |
+| `GET` | `/api/v1/interviews/{id}/evaluation` | Yes | Fetches evaluation dashboard details. |
+| `GET` | `/api/v1/interviews/{id}/report` | Yes | Compiles downloadable markdown performance report. |
 </details>
 
 ---
 
-## 🌀 User Workflow Flowchart
+## ⚙️ Environment Variables
 
-Below is the state transitions of a user going through the mock interview process:
+Copy `backend/.env.example` to `backend/.env`:
+
+| Parameter | Purpose | Default / Sample |
+| :--- | :--- | :--- |
+| `DATABASE_URL` | SQLAlchemy Connection URL | `postgresql+psycopg://user:pass@host/dbname` |
+| `GEMINI_API_KEY` | Upstream Gemini AI API Token | `AIzaSyD-your-api-key-here` |
+| `JWT_SECRET` | Secret key used to sign JWT tokens | `secure-cryptographic-secret` |
+| `JWT_ALGORITHM` | Token encryption algorithm | `HS256` |
+| `ACCESS_TOKEN_EXPIRE_MINUTES`| Session validity duration (minutes) | `60` |
+| `NEXT_PUBLIC_API_URL` | Frontend endpoint mapper | `/api/v1` |
+
+---
+
+## 🌀 Workflow
+
+The following flowchart outlines the path candidates take during a mock technical interview:
 
 ```mermaid
 flowchart TD
@@ -381,19 +415,34 @@ flowchart TD
 
 ## 🔮 Future Improvements
 
-* [ ] 🎙️ **Speech-to-Text & Text-to-Speech**: Implement real-time voice conversations using WebRTC or WebSocket audio streaming.
-* [ ] 📈 **Comparative Analytics**: Visual dashboards tracing progress score improvements over time.
-* [ ] 📂 **GitHub / LinkedIn Auto-Import**: Auto-generate custom personas based on target job listings.
-* [ ] 👨‍👩‍👦 **Multiplayer Mocking**: Mock interview mode with peer-review panels and custom scorecards.
+- [ ] 🎙️ **Speech-to-Text Integration**: Allow users to speak their answers using audio recording streaming.
+- [ ] 👥 **Community Personas**: Enable shared public user-created interviewer personas.
+- [ ] 📝 **PDF Export**: Single-click PDF export functionality for performance reports.
+- [ ] 💻 **Interactive Code Sandbox**: Code editor panel for real-time coding simulations.
 
 ---
 
 ## 👥 Contributors
 
 <p align="center">
-  <a href="https://github.com/logitechsoumili/interviewverse-ai/graphs/contributors">
-    <img src="https://contrib.rocks/image?repo=logitechsoumili/interviewverse-ai" alt="Contributors List" />
-  </a>
+  <table align="center">
+    <tr>
+      <td align="center">
+        <a href="https://github.com/logitechsoumili">
+          <img src="https://placehold.co/100x100/A855F7/ffffff?text=Soumili" alt="Soumili Avatar" width="60" style="border-radius:50%;" /><br/>
+          <sub><strong>Soumili Roy</strong></sub>
+        </a><br/>
+        💻 Project Architect
+      </td>
+      <td align="center">
+        <a href="https://github.com/logitechsoumili/interviewverse-ai/graphs/contributors">
+          <img src="https://placehold.co/100x100/4169E1/ffffff?text=Helper" alt="SRE Helper Avatar" width="60" style="border-radius:50%;" /><br/>
+          <sub><strong>DevOps Agent</strong></sub>
+        </a><br/>
+        ⚙️ DevOps & SRE
+      </td>
+    </tr>
+  </table>
 </p>
 
 ---
