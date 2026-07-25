@@ -2,6 +2,7 @@
 
 import Link from "next/link";
 import { useParams } from "next/navigation";
+import { useEffect, useState } from "react";
 import { motion } from "framer-motion";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
@@ -16,7 +17,7 @@ import {
   formatEvaluationTimestamp,
   getReportApiErrorMessage,
 } from "@/features/evaluations/utils";
-import { formatElapsedTime } from "@/features/interviews/utils";
+import { formatElapsedTime, getPathnameInterviewId } from "@/features/interviews/utils";
 import { formatPersonaName } from "@/features/dashboard/utils";
 
 type ReportPageProps = {
@@ -89,10 +90,17 @@ function ReportSectionCard({
 }
 
 export function ReportPage() {
-  const params = useParams();
-  const interviewId = params.id as string;
-  const sessionQuery = useInterviewSessionQuery(interviewId);
-  const reportQuery = useReportQuery(interviewId);
+  const [interviewId, setInterviewId] = useState<string | null>(null);
+
+  useEffect(() => {
+    const id = getPathnameInterviewId();
+    if (id) {
+      setInterviewId(id);
+    }
+  }, []);
+
+  const sessionQuery = useInterviewSessionQuery(interviewId || "");
+  const reportQuery = useReportQuery(interviewId || "");
 
   const report = reportQuery.data ?? null;
   const session = sessionQuery.data ?? null;
@@ -102,7 +110,7 @@ export function ReportPage() {
   const interviewTitle = session?.title ?? "Interview report";
   const printableMarkdown = report?.markdown_report ?? "";
 
-  if (reportQuery.isLoading) {
+  if (!interviewId || reportQuery.isLoading) {
     return <ReportLoadingState />;
   }
 

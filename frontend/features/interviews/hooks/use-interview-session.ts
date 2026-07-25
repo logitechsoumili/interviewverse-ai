@@ -7,7 +7,11 @@ import { loadInterviewSession } from "@/features/interviews/utils";
 export function useInterviewSessionQuery(interviewId: string) {
   return useQuery({
     queryKey: queryKeys.interviewSessions.detail(interviewId),
-    queryFn: () => loadInterviewSession(interviewId),
+    queryFn: () => {
+      if (!interviewId) return null;
+      return loadInterviewSession(interviewId);
+    },
+    enabled: !!interviewId,
     staleTime: Infinity,
     gcTime: Infinity,
     retry: false,

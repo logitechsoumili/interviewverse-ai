@@ -46,6 +46,16 @@ async def lifespan(_: FastAPI) -> AsyncIterator[None]:
                 logger.info(f"Running database migrations (attempt {attempt}/{max_retries})...")
                 command.upgrade(alembic_cfg, "head")
                 logger.info("Database migrations upgraded successfully.")
+                
+                # Seed the database programmatically on startup
+                try:
+                    logger.info("Seeding database default personas/users...")
+                    from app.db.seed import seed_database
+                    seed_database()
+                    logger.info("Database seeded successfully.")
+                except Exception as seed_err:
+                    logger.error(f"Failed to seed database: {seed_err}", exc_info=True)
+                
                 break
             except Exception as err:
                 if attempt == max_retries:

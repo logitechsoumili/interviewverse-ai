@@ -23,7 +23,7 @@ import {
   isEvaluationNotFoundError,
 } from "@/features/evaluations/utils";
 import { queryKeys } from "@/lib/query-keys";
-import { formatElapsedTime } from "@/features/interviews/utils";
+import { formatElapsedTime, getPathnameInterviewId } from "@/features/interviews/utils";
 import { formatPersonaName } from "@/features/dashboard/utils";
 import { toast } from "sonner";
 
@@ -95,11 +95,18 @@ function ScoreMetricCard({
 }
 
 export function EvaluationPage() {
-  const params = useParams();
-  const interviewId = params.id as string;
+  const [interviewId, setInterviewId] = useState<string | null>(null);
+
+  useEffect(() => {
+    const id = getPathnameInterviewId();
+    if (id) {
+      setInterviewId(id);
+    }
+  }, []);
+
   const queryClient = useQueryClient();
-  const sessionQuery = useInterviewSessionQuery(interviewId);
-  const evaluationQuery = useEvaluationQuery(interviewId);
+  const sessionQuery = useInterviewSessionQuery(interviewId || "");
+  const evaluationQuery = useEvaluationQuery(interviewId || "");
   const generateEvaluationMutation = useGenerateEvaluationMutation();
   const [generatedEvaluation, setGeneratedEvaluation] = useState<EvaluationApiResponse | null>(null);
   const [generationError, setGenerationError] = useState<string | null>(null);
@@ -115,9 +122,9 @@ export function EvaluationPage() {
     setGenerationError(null);
 
     try {
-      const result = await generateEvaluationMutation.mutateAsync(interviewId);
+      const result = await generateEvaluationMutation.mutateAsync(interviewId || "");
       setGeneratedEvaluation(result);
-      queryClient.setQueryData(queryKeys.evaluations.detail(interviewId), result);
+      queryClient.setQueryData(queryKeys.evaluations.detail(interviewId || ""), result);
     } catch (error) {
       const message = getEvaluationApiErrorMessage(error, "Unable to generate evaluation.");
       setGenerationError(message);
@@ -131,7 +138,7 @@ export function EvaluationPage() {
     }
   }, [generateEvaluationMutation.isPending, hasRequestedGeneration, shouldGenerate, startGeneration]);
 
-  const isLoading = evaluationQuery.isLoading;
+  const isLoading = !interviewId || evaluationQuery.isLoading;
   const isGenerating = generateEvaluationMutation.isPending || (hasRequestedGeneration && !evaluation);
   const hasUnauthorizedError =
     Boolean(queryError) &&

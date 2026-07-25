@@ -168,3 +168,16 @@ export function saveInterviewSession(session: InterviewSession) {
 
   window.localStorage.setItem(getStorageKey(session.interviewId), JSON.stringify(session));
 }
+
+export function getPathnameInterviewId(): string | null {
+  if (typeof window === "undefined") {
+    return null;
+  }
+  const pathname = window.location.pathname;
+  const segments = pathname.split("/");
+  const idx = segments.indexOf("interview");
+  if (idx !== -1 && segments[idx + 1] && segments[idx + 1] !== "placeholder") {
+    return segments[idx + 1];
+  }
+  return null;
+}

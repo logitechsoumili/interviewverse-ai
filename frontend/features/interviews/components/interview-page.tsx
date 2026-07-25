@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { useQueryClient } from "@tanstack/react-query";
 import { useParams, useRouter } from "next/navigation";
 import { motion } from "framer-motion";
@@ -21,26 +21,34 @@ import {
   createUserMessage,
   getInterviewApiErrorMessage,
   saveInterviewSession,
+  getPathnameInterviewId,
 } from "@/features/interviews/utils";
 import { queryKeys } from "@/lib/query-keys";
 import { toast } from "sonner";
 
 export function InterviewPage() {
   const router = useRouter();
-  const params = useParams();
-  const interviewId = params.id as string;
+  const [interviewId, setInterviewId] = useState<string | null>(null);
+
+  useEffect(() => {
+    const id = getPathnameInterviewId();
+    if (id) {
+      setInterviewId(id);
+    }
+  }, []);
+
   const queryClient = useQueryClient();
-  const sessionQuery = useInterviewSessionQuery(interviewId);
+  const sessionQuery = useInterviewSessionQuery(interviewId || "");
   const sendMessageMutation = useSendInterviewMessageMutation();
   const completeInterviewMutation = useCompleteInterviewMutation();
   const [endDialogOpen, setEndDialogOpen] = useState(false);
 
   const session = sessionQuery.data ?? null;
-  const isLoading = sessionQuery.isLoading || sessionQuery.isFetching;
+  const isLoading = !interviewId || sessionQuery.isLoading || sessionQuery.isFetching;
 
   const commitSession = (updater: (current: InterviewSession) => InterviewSession) => {
     queryClient.setQueryData<InterviewSession | null>(
-      queryKeys.interviewSessions.detail(interviewId),
+      queryKeys.interviewSessions.detail(interviewId || ""),
       (current) => {
         if (!current) {
           return current;

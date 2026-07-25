@@ -7,7 +7,11 @@ import { fetchEvaluation, generateEvaluation } from "@/features/evaluations/serv
 export function useEvaluationQuery(interviewId: string) {
   return useQuery({
     queryKey: queryKeys.evaluations.detail(interviewId),
-    queryFn: () => fetchEvaluation(interviewId),
+    queryFn: () => {
+      if (!interviewId) return null;
+      return fetchEvaluation(interviewId);
+    },
+    enabled: !!interviewId,
     staleTime: Infinity,
     retry: false,
     refetchOnWindowFocus: false,
