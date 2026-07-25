@@ -1,6 +1,6 @@
 <p align="center">
   <a href="https://github.com/logitechsoumili/interviewverse-ai">
-    <img src="https://placehold.co/1200x400/0f172a/9333ea?text=🔮+INTERVIEWVERSE+AI+BANNER" alt="InterviewVerse AI Banner" width="100%" />
+    <img src="https://raw.githubusercontent.com/logitechsoumili/interviewverse-ai/main/assets/banner.png" width="100%" alt="InterviewVerse AI Banner">
   </a>
 </p>
 
