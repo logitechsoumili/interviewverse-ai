@@ -22,7 +22,9 @@ def seed_database() -> None:
         logger.info("Starting database seeding...")
 
         # 1. Seed System User
-        system_user = db.query(UserORM).filter(UserORM.id == SYSTEM_USER_ID).first()
+        system_user = db.query(UserORM).filter(
+            (UserORM.id == SYSTEM_USER_ID) | (UserORM.email == "system@interviewverse.ai")
+        ).first()
         if not system_user:
             logger.info("Creating system user...")
             system_user = UserORM(
@@ -35,6 +37,10 @@ def seed_database() -> None:
             db.flush()
         else:
             logger.info("System user already exists.")
+            if system_user.id != SYSTEM_USER_ID:
+                logger.info(f"Updating system user ID from {system_user.id} to {SYSTEM_USER_ID}...")
+                system_user.id = SYSTEM_USER_ID
+                db.flush()
 
         # 2. Seed default personas
         default_personas = [
@@ -121,16 +127,21 @@ def seed_database() -> None:
         ]
 
         for persona in default_personas:
-            existing = db.query(PersonaORM).filter(
-                PersonaORM.id == persona.id,
-                PersonaORM.user_id == SYSTEM_USER_ID
-            ).first()
+            existing = db.query(PersonaORM).filter(PersonaORM.id == persona.id).first()
 
             if not existing:
                 logger.info(f"Adding persona: {persona.name}")
                 db.add(persona)
             else:
-                logger.info(f"Persona already exists: {persona.name}")
+                logger.info(f"Persona already exists: {persona.name}. Updating details...")
+                existing.name = persona.name
+                existing.role = persona.role
+                existing.description = persona.description
+                existing.interview_style = persona.interview_style
+                existing.supported_difficulty_levels = persona.supported_difficulty_levels
+                existing.focus_areas = persona.focus_areas
+                existing.system_context = persona.system_context
+                existing.user_id = SYSTEM_USER_ID
 
         db.commit()
         logger.info("Database seeding successfully completed!")
