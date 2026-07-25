@@ -18,19 +18,6 @@
   <img src="https://readme-typing-svg.herokuapp.com?font=Fira+Code&size=22&duration=3500&pause=1000&color=A855F7&center=true&vCenter=true&width=600&lines=Evaluate+Candidate+Core+Strengths;Seeded+Multi-Persona+Simulation+Interviews;Detailed+Performance+Learning+Roadmaps;Production-Ready+Docker+%2B+GCP+Blueprints" alt="Typing SVG" />
 </p>
 
-<p align="center">
-  <a href="https://github.com/logitechsoumili/interviewverse-ai/stargazers">
-    <img src="https://img.shields.io/github/stars/logitechsoumili/interviewverse-ai?style=for-the-badge&color=8A2BE2&logo=github" alt="GitHub Stars" />
-  </a>
-  <a href="https://github.com/logitechsoumili/interviewverse-ai/network/members">
-    <img src="https://img.shields.io/github/forks/logitechsoumili/interviewverse-ai?style=for-the-badge&color=4169E1&logo=git" alt="GitHub Forks" />
-  </a>
-  <a href="https://github.com/logitechsoumili/interviewverse-ai/blob/main/LICENSE">
-    <img src="https://img.shields.io/github/license/logitechsoumili/interviewverse-ai?style=for-the-badge&color=2E8B57" alt="MIT License" />
-  </a>
-  <img src="https://komarev.com/ghpvc/?username=logitechsoumili-interviewverse-ai&color=mediumvioletred&style=for-the-badge" alt="Visitor Counter" />
-</p>
-
 ---
 
 ## 📌 Table of Contents
@@ -42,14 +29,12 @@
 - [📂 Folder Structure](#-folder-structure)
 - [🖼️ Screenshots](#-screenshots)
 - [🚀 Installation](#-installation)
-- [🚢 Google Cloud Deployment](#-google-cloud-deployment)
 - [🧬 API Endpoints](#-api-endpoints)
 - [⚙️ Environment Variables](#-environment-variables)
 - [🌀 Workflow](#-workflow)
 - [🔮 Future Improvements](#-future-improvements)
 - [👥 Contributors](#-contributors)
 - [📄 License](#-license)
-- [💖 Acknowledgements](#-acknowledgements)
 
 ---
 
@@ -319,41 +304,6 @@ docker-compose up --build
 
 ---
 
-## 🚢 Google Cloud Deployment (GCP Cloud Run)
-
-### 1. Build and push the image to Google Artifact Registry
-```bash
-# Authenticate Google Cloud CLI
-gcloud auth login
-gcloud config set project [PROJECT_ID]
-
-# Create Artifact Registry Docker Repository
-gcloud artifacts repositories create interviewverse-repo \
-    --repository-format=docker \
-    --location=us-central1
-
-# Build and Tag production container
-docker build -t us-central1-docker.pkg.dev/[PROJECT_ID]/interviewverse-repo/app:latest .
-
-# Configure Docker permissions helper
-gcloud auth configure-docker us-central1-docker.pkg.dev
-
-# Push to Artifact Registry
-docker push us-central1-docker.pkg.dev/[PROJECT_ID]/interviewverse-repo/app:latest
-```
-
-### 2. Deploy to Cloud Run
-```bash
-gcloud run deploy interviewverse-service \
-    --image us-central1-docker.pkg.dev/[PROJECT_ID]/interviewverse-repo/app:latest \
-    --platform managed \
-    --region us-central1 \
-    --allow-unauthenticated \
-    --set-env-vars="DATABASE_URL=postgresql+psycopg://[USER]:[PASS]@[CLOUD_SQL_IP]/[DB_NAME],GEMINI_API_KEY=[API_KEY],JWT_SECRET=[SECRET]"
-```
-
----
-
 ## 🧬 API Endpoints
 
 <details>
@@ -451,14 +401,14 @@ flowchart TD
       <td align="center">
         <a href="https://github.com/logitechsoumili">
           <img src="https://placehold.co/100x100/A855F7/ffffff?text=Soumili" alt="Soumili Avatar" width="60" style="border-radius:50%;" /><br/>
-          <sub><strong>Soumili Roy</strong></sub>
+          <sub><strong>Soumili Saha</strong></sub>
         </a><br/>
         💻 Project Architect
       </td>
       <td align="center">
         <a href="https://github.com/logitechsoumili/interviewverse-ai/graphs/contributors">
-          <img src="https://placehold.co/100x100/4169E1/ffffff?text=Helper" alt="SRE Helper Avatar" width="60" style="border-radius:50%;" /><br/>
-          <sub><strong>DevOps Agent</strong></sub>
+          <img src="https://placehold.co/100x100/4169E1/ffffff?text=Rupsha" alt="Rupsha Avatar" width="60" style="border-radius:50%;" /><br/>
+          <sub><strong>Rupsha Debnath</strong></sub>
         </a><br/>
         ⚙️ DevOps & SRE
       </td>
@@ -470,16 +420,8 @@ flowchart TD
 
 ## 📄 License
 
-Distributed under the MIT License. See [LICENSE](LICENSE) for details.
+This project is licensed under the **InterviewVerse AI Proprietary License**.
 
----
+No permission is granted to copy, modify, redistribute, or commercially use this software without prior written consent from the copyright holders.
 
-## 💖 Acknowledgements
-
-* [Google Gemini AI API](https://ai.google.dev/)
-* [FastAPI Framework](https://fastapi.tiangolo.com/)
-* [Next.js App Router](https://nextjs.org/)
-* [Tailwind CSS](https://tailwindcss.com/)
-* [Neon Serverless PostgreSQL](https://neon.tech/)
-* [Shields.io Badges](https://shields.io/)
-* [Docker Containers](https://www.docker.com/)
+See the [LICENSE](LICENSE) file for details.
