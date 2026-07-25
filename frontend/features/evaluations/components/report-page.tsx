@@ -1,6 +1,7 @@
 "use client";
 
 import Link from "next/link";
+import { useParams } from "next/navigation";
 import { motion } from "framer-motion";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
@@ -87,7 +88,9 @@ function ReportSectionCard({
   );
 }
 
-export function ReportPage({ interviewId }: ReportPageProps) {
+export function ReportPage() {
+  const params = useParams();
+  const interviewId = params.id as string;
   const sessionQuery = useInterviewSessionQuery(interviewId);
   const reportQuery = useReportQuery(interviewId);
 

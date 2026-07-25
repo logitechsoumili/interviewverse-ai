@@ -1,6 +1,7 @@
 "use client";
 
 import Link from "next/link";
+import { useParams } from "next/navigation";
 import { useCallback, useEffect, useState } from "react";
 import { useQueryClient } from "@tanstack/react-query";
 import { motion } from "framer-motion";
@@ -93,7 +94,9 @@ function ScoreMetricCard({
   );
 }
 
-export function EvaluationPage({ interviewId }: EvaluationPageProps) {
+export function EvaluationPage() {
+  const params = useParams();
+  const interviewId = params.id as string;
   const queryClient = useQueryClient();
   const sessionQuery = useInterviewSessionQuery(interviewId);
   const evaluationQuery = useEvaluationQuery(interviewId);

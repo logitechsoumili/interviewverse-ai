@@ -2,7 +2,7 @@
 
 import { useState } from "react";
 import { useQueryClient } from "@tanstack/react-query";
-import { useRouter } from "next/navigation";
+import { useParams, useRouter } from "next/navigation";
 import { motion } from "framer-motion";
 import { Card, CardContent } from "@/components/ui/card";
 import { InterviewComposer } from "@/features/interviews/components/interview-composer";
@@ -25,12 +25,10 @@ import {
 import { queryKeys } from "@/lib/query-keys";
 import { toast } from "sonner";
 
-type InterviewPageProps = {
-  interviewId: string;
-};
-
-export function InterviewPage({ interviewId }: InterviewPageProps) {
+export function InterviewPage() {
   const router = useRouter();
+  const params = useParams();
+  const interviewId = params.id as string;
   const queryClient = useQueryClient();
   const sessionQuery = useInterviewSessionQuery(interviewId);
   const sendMessageMutation = useSendInterviewMessageMutation();
