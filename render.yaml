@@ -4,6 +4,7 @@ services:
     env: docker
     dockerfilePath: Dockerfile
     dockerContext: .
+    healthCheckPath: /health
     plan: starter # Docker web services require a paid instance type (e.g. Starter) on Render due to RAM/CPU and build resource requirements
     envVars:
       - key: PORT

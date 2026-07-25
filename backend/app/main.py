@@ -27,6 +27,7 @@ async def lifespan(_: FastAPI) -> AsyncIterator[None]:
     try:
         from alembic.config import Config
         from alembic import command
+        import time
         
         current_dir = os.path.dirname(os.path.abspath(__file__))
         alembic_ini = os.path.normpath(os.path.join(current_dir, "..", "alembic.ini"))
@@ -37,11 +38,26 @@ async def lifespan(_: FastAPI) -> AsyncIterator[None]:
         alembic_cfg.set_main_option("script_location", alembic_dir)
         alembic_cfg.set_main_option("sqlalchemy.url", settings.database_url.replace("%", "%%"))
         
-        # Run upgrade head
-        command.upgrade(alembic_cfg, "head")
-        logger.info("Database migrations upgraded successfully.")
+        # Run upgrade head with retries to handle database sleep/startup latency
+        max_retries = 5
+        retry_delay = 3
+        for attempt in range(1, max_retries + 1):
+            try:
+                logger.info(f"Running database migrations (attempt {attempt}/{max_retries})...")
+                command.upgrade(alembic_cfg, "head")
+                logger.info("Database migrations upgraded successfully.")
+                break
+            except Exception as err:
+                if attempt == max_retries:
+                    raise err
+                logger.warning(
+                    f"Migration attempt {attempt} failed: {err}. Retrying in {retry_delay} seconds..."
+                )
+                time.sleep(retry_delay)
     except Exception as err:
-        logger.error(f"Error running database migrations: {err}", exc_info=True)
+        logger.error(f"Critical error running database migrations: {err}", exc_info=True)
+        # Raise exception to fail fast in production if migrations cannot run
+        raise err
         
     yield
 
@@ -105,10 +121,20 @@ def create_app() -> FastAPI:
             from fastapi import HTTPException
             raise HTTPException(status_code=404, detail="Not Found")
 
+        # Secure path containment check to prevent Directory Traversal LFI vulnerabilities
+        abs_static_dir = os.path.abspath(static_dir)
+        abs_file_path = os.path.abspath(os.path.join(static_dir, rest_of_path))
+        try:
+            if os.path.commonpath([abs_static_dir, abs_file_path]) != abs_static_dir:
+                from fastapi import HTTPException
+                raise HTTPException(status_code=403, detail="Forbidden")
+        except ValueError:
+            from fastapi import HTTPException
+            raise HTTPException(status_code=403, detail="Forbidden")
+
         # 1. Check if the exact file exists (e.g. static assets, images, favicon)
-        file_path = os.path.join(static_dir, rest_of_path)
-        if os.path.isfile(file_path):
-            return FileResponse(file_path)
+        if os.path.isfile(abs_file_path):
+            return FileResponse(abs_file_path)
 
         # Rewrite dynamic route paths to match Next.js static template output files
         # e.g., dashboard/interview/123 -> dashboard/interview/placeholder.html
