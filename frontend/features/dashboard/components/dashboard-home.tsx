@@ -90,6 +90,7 @@ export function DashboardHome() {
             title="No interviews yet."
             description="Start your first interview to populate the dashboard and see session analytics here."
             actionLabel="Start Interview"
+            actionHref="/dashboard/personas"
             className="border-border/80 bg-surface/90"
           />
         ) : (

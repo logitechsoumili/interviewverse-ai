@@ -4,11 +4,7 @@ import Link from "next/link";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 
-type DashboardHeaderProps = {
-  onStartInterview?: () => void;
-};
-
-export function DashboardHeader({ onStartInterview }: DashboardHeaderProps) {
+export function DashboardHeader() {
   return (
     <Card className="border-border/80 bg-gradient-to-br from-surface via-surface to-background shadow-sm">
       <CardHeader className="space-y-4">
@@ -24,8 +20,8 @@ export function DashboardHeader({ onStartInterview }: DashboardHeaderProps) {
         </p>
       </CardHeader>
       <CardContent className="flex flex-wrap gap-3">
-        <Button type="button" onClick={onStartInterview} disabled={!onStartInterview}>
-          Start Interview
+        <Button asChild>
+          <Link href="/dashboard/personas">Start Interview</Link>
         </Button>
         <Button asChild variant="outline">
           <Link href="/dashboard/history">View History</Link>
