@@ -388,7 +388,6 @@ flowchart TD
 
 - [ ] 🎙️ **Speech-to-Text Integration**: Allow users to speak their answers using audio recording streaming.
 - [ ] 👥 **Community Personas**: Enable shared public user-created interviewer personas.
-- [ ] 📝 **PDF Export**: Single-click PDF export functionality for performance reports.
 - [ ] 💻 **Interactive Code Sandbox**: Code editor panel for real-time coding simulations.
 
 ---
