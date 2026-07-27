@@ -62,7 +62,6 @@ Every session is persisted in a database, allowing users to pause, resume, and r
 - [x] 📈 **Dashboard Analytics**: High-level telemetry of overall scores and completed milestones.
 - [x] 📱 **Responsive UI**: Fully optimized layout for desktop, tablet, and mobile browsers.
 - [x] 🐳 **Docker Deployment**: Clean, multi-stage production container setups.
-- [x] ☁️ **Google Cloud Platform Deployment**: Standard templates for GCP Run & Cloud SQL integration.
 
 ---
 
